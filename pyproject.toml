@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "burgeap-cv-generator"
+version = "1.0.0"
+description = "Générateur officiel de CV Ginger Burgeap 2026 (1 à 2 pages, FR/EN)"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "Ginger Burgeap", email = "contact@burgeap.fr" }
+]
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "pydantic>=2.9.0",
+    "pydantic-settings>=2.5.0",
+    "weasyprint>=62.0",
+    "python-docx>=1.1.0",
+    "python-pptx>=1.0.0",
+    "pdfplumber>=0.11.0",
+    "pypdf>=5.0.0",
+    "opencv-python-headless>=4.10.0",
+    "pillow>=10.4.0",
+    "python-multipart>=0.0.9",
+    "jinja2>=3.1.4",
+    "sse-starlette>=2.1.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
