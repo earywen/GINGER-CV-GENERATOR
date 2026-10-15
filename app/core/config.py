@@ -11,6 +11,8 @@ STATIC_DIR = APP_DIR / "static"
 TEMPLATE_DIR = APP_DIR / "templates"
 ASSETS_DIR = STATIC_DIR / "assets"
 LOGO_PATH = ASSETS_DIR / "logo.png"
+DATA_DIR = BASE_DIR / "data"
+CACHE_DIR = DATA_DIR / "cache"
 
 def _find_agy_binary() -> str:
     found = shutil.which("agy")
@@ -52,6 +54,9 @@ class Settings(BaseSettings):
     TEMPLATE_DIR: Path = TEMPLATE_DIR
     ASSETS_DIR: Path = ASSETS_DIR
     LOGO_PATH: Path = LOGO_PATH
+    DATA_DIR: Path = DATA_DIR
+    CACHE_DIR: Path = CACHE_DIR
+    CACHE_EXPIRATION_DAYS: int = 30
 
     # Job cleanup
     JOB_EXPIRATION_SECONDS: int = 1800

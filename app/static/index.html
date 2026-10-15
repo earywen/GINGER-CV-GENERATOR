@@ -225,10 +225,18 @@
               English
             </button>
           </div>
-          <button id="btn-refresh-preview" class="text-xs bg-burgeap-green/20 hover:bg-burgeap-green/30 text-burgeap-dark dark:text-burgeap-green font-bold px-3 py-1 rounded-lg transition flex items-center gap-1.5">
-            <i class="fa-solid fa-arrows-rotate"></i> Actualiser
-          </button>
+          <div class="flex items-center space-x-2">
+            <!-- Auto-save Sync Indicator -->
+            <div id="save-status-indicator" class="text-[11px] font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-200/50 dark:bg-slate-700/50 select-none transition">
+              <i class="fa-solid fa-cloud-arrow-up text-burgeap-green text-[11px]"></i>
+              <span id="save-status-text">Sauvegardé</span>
+            </div>
+            <button id="btn-refresh-preview" class="text-xs bg-burgeap-green/20 hover:bg-burgeap-green/30 text-burgeap-dark dark:text-burgeap-green font-bold px-3 py-1 rounded-lg transition flex items-center gap-1.5">
+              <i class="fa-solid fa-arrows-rotate"></i> Actualiser
+            </button>
+          </div>
         </div>
+
 
         <!-- Form Scroll Area -->
         <div class="flex-1 overflow-y-auto p-4 space-y-4 text-left">
@@ -542,7 +550,15 @@
     </div>
   </div>
 
+  <!-- Session Restored Toast Notification -->
+  <div id="session-toast" class="hidden fixed bottom-5 left-5 z-50 bg-slate-900/90 dark:bg-slate-800/95 text-white px-4 py-2.5 rounded-xl shadow-2xl border border-slate-700 backdrop-blur-md flex items-center gap-3 text-xs transition duration-300">
+    <div class="w-2 h-2 rounded-full bg-burgeap-green shrink-0"></div>
+    <span id="session-toast-msg">Brouillon de session restauré avec succès.</span>
+    <button id="btn-session-toast-close" type="button" class="text-slate-400 hover:text-white transition ml-2 text-sm">&times;</button>
+  </div>
+
   <script src="/static/vendor/cropper.min.js"></script>
-  <script src="/static/app.js?v=8"></script>
+  <script src="/static/app.js?v=10"></script>
 </body>
+
 </html>

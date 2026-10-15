@@ -22,3 +22,7 @@ venv*/
 
 # Skill binaries
 **/skills/*/scripts/bin/
+
+# Runtime data & cache
+data/
+
