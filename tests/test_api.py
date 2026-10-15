@@ -38,5 +38,15 @@ class TestApiEndpointsParity(unittest.TestCase):
         self.assertEqual(res.headers.get("content-type"), "application/zip")
         self.assertTrue(len(res.content) > 1000)
 
+    def test_health_check(self):
+        res = self.client.get("/api/health")
+        self.assertEqual(res.status_code, 200)
+        data = res.json()
+        self.assertEqual(data["status"], "healthy")
+
+    def test_parse_job_not_found(self):
+        res = self.client.get("/api/parse-cv-status/unknown-uuid")
+        self.assertEqual(res.status_code, 404)
+
 if __name__ == "__main__":
     unittest.main()
