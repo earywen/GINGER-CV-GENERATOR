@@ -87,16 +87,4 @@ def crop_studio_bust(image_bytes: bytes) -> str:
     resized.save(buf, format="JPEG", quality=98)
     return base64.b64encode(buf.getvalue()).decode("utf-8")
 
-def compute_initials(name: str) -> str:
-    if not name:
-        return "GB"
-    parts = [p.strip() for p in name.replace("-", " ").split() if p.strip()]
-    if not parts:
-        return "GB"
-    if len(parts) == 1:
-        return parts[0][:2].upper()
-    elif len(parts) == 2:
-        return (parts[0][0] + parts[1][0]).upper()
-    else:
-        # Ex: Solenn LE BAUD -> SLB, Jean Guillaume ROBIN -> JGR
-        return "".join(p[0].upper() for p in parts[:3])
+from app.utils.formatters import compute_initials

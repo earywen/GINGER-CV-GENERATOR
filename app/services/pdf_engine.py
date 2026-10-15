@@ -2,6 +2,7 @@
 import os
 import base64
 import weasyprint
+from app.utils.formatters import compute_initials
 
 TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), "..", "templates", "cv_template.html")
 LOGO_PATH = os.path.join(os.path.dirname(__file__), "..", "static", "assets", "logo.png")
@@ -62,8 +63,7 @@ def render_html_template(data: dict, lang: str = "fr", font_scale: float = None,
     photo_b64 = data.get("photo_b64")
     initials = data.get("initials")
     if not initials and not photo_b64:
-        parts = name.split()
-        initials = "".join(p[0].upper() for p in parts[:2]) if parts else "GB"
+        initials = compute_initials(name)
         
     if photo_b64:
         photo_html = f'<div class="photo-circle"><img src="data:image/jpeg;base64,{photo_b64}" alt="{name}" /></div>'
