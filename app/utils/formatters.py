@@ -35,21 +35,3 @@ def sanitize_filename(name: Optional[str], lang: str = "FR", ext: str = "pdf") -
     clean_name = re.sub(r"\s+", "_", clean_name).strip("_")
     clean_ext = ext.lstrip(".")
     return f"CV_{clean_name}_{lang.upper()}.{clean_ext}"
-
-def clean_html_formatting(html: Optional[str]) -> str:
-    """
-    Normalizes inline HTML formatting to safe semantic tags:
-    <b> -> <strong>, <i> -> <em>, collapses div line breaks and multiple spaces.
-    """
-    if not html:
-        return ""
-    cleaned = html
-    cleaned = re.sub(r"<b>", "<strong>", cleaned, flags=re.IGNORECASE)
-    cleaned = re.sub(r"</b>", "</strong>", cleaned, flags=re.IGNORECASE)
-    cleaned = re.sub(r"<i>", "<em>", cleaned, flags=re.IGNORECASE)
-    cleaned = re.sub(r"</i>", "</em>", cleaned, flags=re.IGNORECASE)
-    cleaned = re.sub(r"<div><br\s*/?></div>", " ", cleaned, flags=re.IGNORECASE)
-    cleaned = re.sub(r"<div>", " ", cleaned, flags=re.IGNORECASE)
-    cleaned = re.sub(r"</div>", "", cleaned, flags=re.IGNORECASE)
-    cleaned = re.sub(r"[ \t]+", " ", cleaned)
-    return cleaned.strip()

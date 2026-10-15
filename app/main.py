@@ -31,6 +31,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.middleware("http")
+async def add_no_cache_for_static(request, call_next):
+    response = await call_next(request)
+    if request.url.path.startswith("/static/"):
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+    return response
+
 # Mount static assets
 app.mount("/static", StaticFiles(directory=str(settings.STATIC_DIR)), name="static")
 
@@ -39,13 +48,12 @@ async def favicon():
     favicon_path = settings.STATIC_DIR / "assets" / "favicon.ico"
     return FileResponse(favicon_path, media_type="image/x-icon")
 
-@app.api_route("/", methods=["GET", "HEAD"], response_class=HTMLResponse)
+@app.api_route("/", methods=["GET", "HEAD"], response_class=FileResponse)
 async def serve_index():
     index_file = settings.STATIC_DIR / "index.html"
-    with open(index_file, "r", encoding="utf-8") as f:
-        content = f.read()
-    return HTMLResponse(
-        content=content,
+    return FileResponse(
+        str(index_file),
+        media_type="text/html",
         headers={
             "Cache-Control": "no-cache, no-store, must-revalidate",
             "Pragma": "no-cache",

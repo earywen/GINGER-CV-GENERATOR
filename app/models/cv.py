@@ -19,14 +19,17 @@ class CVExtractionSchema(BaseModel):
     role_fr: str = Field(description="Intitulé exact du poste en Français")
     role_en: str = Field(description="Official job title in English")
 
-    exp_fr: str = Field(description="Années d'expérience en Français (ex: '8 ans d'expérience')")
-    exp_en: str = Field(description="Years of experience in English (ex: '8 years of experience')")
+    exp_fr: str = Field(description="Années d'expérience et ancienneté en Français (ex: '6 ans d\\'expérience, dont 3 ans chez GINGER BURGEAP')")
+    exp_en: str = Field(description="Years of experience and tenure in English (ex: '6 years of experience, including 3 years at GINGER BURGEAP')")
 
     agency_fr: str = Field(description="Direction régionale ou agence en Français")
     agency_en: str = Field(description="Regional directorate or office in English")
 
-    formations_fr: List[str] = Field(description="Diplômes et formations en Français")
-    formations_en: List[str] = Field(description="Degrees and training in English")
+    diplomes_fr: List[str] = Field(default_factory=list, description="Diplômes académiques de l'enseignement supérieur en Français (ex: '2018 : Master 2 Géologie...')")
+    diplomes_en: List[str] = Field(default_factory=list, description="Higher education academic degrees in English (ex: '2018: Master\\'s Degree in Geology...')")
+
+    formations_fr: List[str] = Field(default_factory=list, description="Formations professionnelles continues, habilitations sécurité et certifications en Français (ex: 'Habilitation SST', 'AIPR Concepteur', 'CATEC')")
+    formations_en: List[str] = Field(default_factory=list, description="Professional training, safety accreditations and certifications in English (ex: 'SST First Aid Certification', 'AIPR Accreditation')")
 
     competences_fr: List[str] = Field(description="Compétences clés en Français")
     competences_en: List[str] = Field(description="Core competencies in English")
@@ -51,10 +54,13 @@ class CVDataModel(CVExtractionSchema):
     model_config = ConfigDict(extra="allow")
 
     photo_b64: Optional[str] = None
+    t_diplomes_fr: Optional[str] = None
+    t_diplomes_en: Optional[str] = None
     t_formations_fr: Optional[str] = None
     t_formations_en: Optional[str] = None
     t_competences_fr: Optional[str] = None
     t_competences_en: Optional[str] = None
+    show_badges: bool = True
 
 def get_cv_extraction_json_schema() -> Dict[str, Any]:
     """Generates the clean JSON schema used for agy CLI structured output."""

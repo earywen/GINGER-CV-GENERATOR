@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "burgeap-cv-generator"
-version = "1.0.0"
+version = "2.5.0"
 description = "Générateur officiel de CV Ginger Burgeap 2026 (1 à 2 pages, FR/EN)"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -31,3 +31,10 @@ dependencies = [
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["app*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+filterwarnings = [
+    "ignore::starlette.exceptions.StarletteDeprecationWarning",
+]

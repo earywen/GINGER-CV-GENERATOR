@@ -86,5 +86,3 @@ def crop_studio_bust(image_bytes: bytes) -> str:
     buf = io.BytesIO()
     resized.save(buf, format="JPEG", quality=98)
     return base64.b64encode(buf.getvalue()).decode("utf-8")
-
-from app.utils.formatters import compute_initials

@@ -8,9 +8,8 @@ from typing import Dict, Any, Optional
 from app.core import settings, get_logger
 from app.services.extractor import extract_text
 from app.services.ai_parser import parse_cv_with_agy
-from app.services.image_processor import crop_studio_bust
 from app.services.cache_manager import cache_manager
-from app.utils.formatters import compute_initials
+from app.services.cv_pipeline import attach_photo_or_initials
 
 logger = get_logger(__name__)
 
@@ -150,14 +149,7 @@ class JobManager:
             )
 
             # Process photo or generate official initials
-            if photo_b64 and len(photo_b64.strip()) > 50:
-                structured_data["photo_b64"] = photo_b64.strip()
-            elif photo_bytes and len(photo_bytes) > 0:
-                structured_data["photo_b64"] = crop_studio_bust(photo_bytes)
-            else:
-                structured_data["photo_b64"] = None
-                if not structured_data.get("initials"):
-                    structured_data["initials"] = compute_initials(structured_data.get("name", ""))
+            attach_photo_or_initials(structured_data, photo_bytes=photo_bytes, photo_b64=photo_b64)
 
             await self.update_job(
                 job_id,

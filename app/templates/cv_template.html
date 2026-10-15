@@ -164,6 +164,17 @@
       <div class="experience-tag">{{ exp }}</div>
     </div>
     <div class="side-sections-wrapper">
+      {% if diplomes and diplomes|length > 0 %}
+      <div>
+        <div class="side-section-title">{{ t_diplomes }}</div>
+        <ul class="side-list">
+          {% for d in diplomes %}
+            <li>{{ d|safe }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+      {% if formations and formations|length > 0 %}
       <div>
         <div class="side-section-title">{{ t_formations }}</div>
         <ul class="side-list">
@@ -172,6 +183,7 @@
           {% endfor %}
         </ul>
       </div>
+      {% endif %}
       <div>
         <div class="side-section-title">{{ t_competences }}</div>
         <ul class="side-list">
@@ -222,7 +234,9 @@
         <div class="ref-item">
           <div class="ref-header">
             <span class="ref-header-line">{{ r.title }}</span>
-            <span class="ref-badge {% if loop.index0 % 2 == 1 %}green{% endif %}">{{ r.tag }}</span>
+            {% if show_badges and r.tag %}
+              <span class="ref-badge {% if loop.index0 % 2 == 1 %}green{% endif %}">{{ r.tag }}</span>
+            {% endif %}
           </div>
           <div class="ref-desc-text">{{ r.desc }}</div>
         </div>
@@ -272,7 +286,9 @@
         <div class="ref-item">
           <div class="ref-header">
             <span class="ref-header-line">{{ r.title }}</span>
-            <span class="ref-badge {% if (loop.index0 + p1_count) % 2 == 1 %}green{% endif %}">{{ r.tag }}</span>
+            {% if show_badges and r.tag %}
+              <span class="ref-badge {% if (loop.index0 + p1_count) % 2 == 1 %}green{% endif %}">{{ r.tag }}</span>
+            {% endif %}
           </div>
           <div class="ref-desc-text">{{ r.desc }}</div>
         </div>

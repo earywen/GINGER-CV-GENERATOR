@@ -19,6 +19,8 @@ from app.services.cache_manager import cache_manager
 from app.services.session_manager import session_manager
 from app.utils.formatters import compute_initials
 
+from app.services.cv_pipeline import attach_photo_or_initials, parse_and_cache_cv
+
 logger = get_logger(__name__)
 router = APIRouter(prefix="/api", tags=["CV Analysis & Sessions"])
 
@@ -84,36 +86,15 @@ async def parse_cv_sync_endpoint(
     try:
         cv_bytes = await cv_file.read()
         raw_text = extract_text(cv_file.filename or "cv.pdf", cv_bytes)
+        structured_data = await parse_and_cache_cv(raw_text, agency=agency)
         
-        if not raw_text or len(raw_text.strip()) < 20:
-            raise HTTPException(
-                status_code=400,
-                detail="Impossible d'extraire le texte du CV. Vérifiez le format du fichier."
-            )
-
-        cache_key = cache_manager.compute_cache_key(raw_text, agency=agency)
-        cached_data = cache_manager.get_cached_parse(cache_key)
-
-        if cached_data:
-            logger.info("Synchronous parse served from cache.")
-            structured_data = copy.deepcopy(cached_data)
-        else:
-            structured_data = await parse_cv_with_agy(raw_text, default_agency=agency)
-            cache_manager.save_cached_parse(cache_key, structured_data)
-        
-        if photo_b64 and len(photo_b64.strip()) > 50:
-            structured_data["photo_b64"] = photo_b64.strip()
-        elif photo_file and photo_file.filename:
-            p_bytes = await photo_file.read()
-            if len(p_bytes) > 0:
-                structured_data["photo_b64"] = crop_studio_bust(p_bytes)
-        else:
-            structured_data["photo_b64"] = None
-            if not structured_data.get("initials"):
-                structured_data["initials"] = compute_initials(structured_data.get("name", ""))
+        p_bytes = await photo_file.read() if photo_file else None
+        attach_photo_or_initials(structured_data, photo_bytes=p_bytes, photo_b64=photo_b64)
                 
         return {"status": "success", "data": structured_data}
         
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except HTTPException:
         raise
     except Exception as e:

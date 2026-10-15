@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 from app.models.cv import CVDataModel, CVReference, RenderPayload, JobStatusResponse
-from app.utils.formatters import sanitize_filename, clean_html_formatting
+from app.utils.formatters import sanitize_filename
 from tests.test_pdf_engine import SAMPLE_CV_DATA
 
 class TestModelsAndFormatters(unittest.TestCase):
@@ -27,11 +27,6 @@ class TestModelsAndFormatters(unittest.TestCase):
         self.assertEqual(sanitize_filename("Marine RICHARD", "FR"), "CV_Marine_RICHARD_FR.pdf")
         self.assertEqual(sanitize_filename("Solenn   LE BAUD  ", "EN"), "CV_Solenn_LE_BAUD_EN.pdf")
         self.assertEqual(sanitize_filename('Hervé HOGIE / "Lead"', "FR", "zip"), "CV_Hervé_HOGIE_Lead_FR.zip")
-
-    def test_clean_html_formatting(self):
-        raw = "<b>Titre</b> et <i>italique</i><div><br></div><div>suite</div>"
-        cleaned = clean_html_formatting(raw)
-        self.assertEqual(cleaned, "<strong>Titre</strong> et <em>italique</em> suite")
 
 if __name__ == "__main__":
     unittest.main()
