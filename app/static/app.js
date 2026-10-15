@@ -77,8 +77,8 @@
     pdfViewportContainer: document.getElementById('pdf-viewport-container'),
     pdfStage: document.getElementById('pdf-stage'),
     pdfSheetContainer: document.getElementById('pdf-sheet-container'),
+    pdfShadowHost: document.getElementById('pdf-shadow-host'),
     pdfPanOverlay: document.getElementById('pdf-pan-overlay'),
-    pdfViewerFrame: document.getElementById('pdf-viewer-frame'),
     pdfLoadingSpinner: document.getElementById('pdf-loading-spinner'),
     btnToolHand: document.getElementById('btn-tool-hand'),
     btnToolSelect: document.getElementById('btn-tool-select'),
@@ -357,8 +357,8 @@
     panX: 0,
     panY: 20,
     zoom: 0.70,
-    minZoom: 0.30,
-    maxZoom: 2.20,
+    minZoom: 0.25,
+    maxZoom: 3.50,
 
     // Mouse / Drag State
     isDragging: false,
@@ -369,7 +369,9 @@
     currentTool: 'hand', // 'hand' or 'select'
     isSpacePressed: false,
     pageCount: 1,
+    shadowRoot: null,
     _animTimer: null,
+    _hasInitialFit: false,
 
     updateTransform(animate = false) {
       if (!DOM.pdfStage) return;
@@ -421,7 +423,7 @@
 
     zoomReset(animate = true) {
       if (!DOM.pdfViewportContainer) return;
-      const sheetWidth = 820;
+      const sheetWidth = 794;
       this.zoom = 1.0;
       this.panX = (DOM.pdfViewportContainer.clientWidth - sheetWidth * this.zoom) / 2;
       this.panY = 24;
@@ -430,20 +432,20 @@
 
     fitWidth(animate = true) {
       if (!DOM.pdfViewportContainer) return;
-      const vw = DOM.pdfViewportContainer.clientWidth - 40;
-      const sheetWidth = 820;
-      this.zoom = Math.min(1.4, Math.max(0.40, vw / sheetWidth));
-      this.panX = Math.max(12, (DOM.pdfViewportContainer.clientWidth - sheetWidth * this.zoom) / 2);
-      this.panY = 20;
+      const vw = DOM.pdfViewportContainer.clientWidth - 48;
+      const sheetWidth = 794;
+      this.zoom = Math.min(1.6, Math.max(0.35, vw / sheetWidth));
+      this.panX = Math.max(16, (DOM.pdfViewportContainer.clientWidth - sheetWidth * this.zoom) / 2);
+      this.panY = 24;
       this.updateTransform(animate);
     },
 
     fitPage(animate = true) {
       if (!DOM.pdfViewportContainer) return;
-      const vw = DOM.pdfViewportContainer.clientWidth - 40;
-      const vh = DOM.pdfViewportContainer.clientHeight - 40;
-      const sheetWidth = 820;
-      const sheetHeight = 1180;
+      const vw = DOM.pdfViewportContainer.clientWidth - 48;
+      const vh = DOM.pdfViewportContainer.clientHeight - 48;
+      const sheetWidth = 794;
+      const sheetHeight = 1123;
       const fitW = vw / sheetWidth;
       const fitH = vh / sheetHeight;
       this.zoom = Math.min(fitW, fitH, 1.0);
@@ -454,13 +456,14 @@
 
     goToPage(pageNum, animate = true) {
       if (!DOM.pdfViewportContainer) return;
-      const sheetWidth = 820;
-      const pageHeight = 1146; // height of Page 1 with margin
+      const sheetWidth = 794;
+      const pageHeight = 1123;
+      const gap = 24;
       this.panX = (DOM.pdfViewportContainer.clientWidth - sheetWidth * this.zoom) / 2;
       if (pageNum === 1) {
-        this.panY = 20;
+        this.panY = 24;
       } else {
-        this.panY = 20 - (pageHeight * this.zoom);
+        this.panY = 24 - ((pageHeight + gap) * this.zoom);
       }
       this.updateTransform(animate);
     },
@@ -479,12 +482,18 @@
         }
       }
 
+      const activeDrag = (isHand || this.isSpacePressed);
       if (DOM.pdfPanOverlay) {
-        DOM.pdfPanOverlay.style.pointerEvents = (isHand || this.isSpacePressed) ? 'auto' : 'none';
-        DOM.pdfPanOverlay.style.cursor = (isHand || this.isSpacePressed) ? 'grab' : 'default';
+        DOM.pdfPanOverlay.style.pointerEvents = activeDrag ? 'auto' : 'none';
+        DOM.pdfPanOverlay.style.cursor = activeDrag ? 'grab' : 'default';
+        if (activeDrag) {
+          DOM.pdfPanOverlay.classList.remove('hidden');
+        } else {
+          DOM.pdfPanOverlay.classList.add('hidden');
+        }
       }
       if (DOM.pdfViewportContainer) {
-        DOM.pdfViewportContainer.style.cursor = (isHand || this.isSpacePressed) ? 'grab' : 'default';
+        DOM.pdfViewportContainer.style.cursor = activeDrag ? 'grab' : 'default';
       }
     },
 
@@ -500,7 +509,11 @@
 
     async refresh() {
       if (!State.cvData) return;
-      DOM.pdfLoadingSpinner.classList.remove('hidden');
+      if (DOM.pdfLoadingSpinner) DOM.pdfLoadingSpinner.classList.remove('hidden');
+
+      if (!this.shadowRoot && DOM.pdfShadowHost) {
+        this.shadowRoot = DOM.pdfShadowHost.attachShadow({ mode: 'open' });
+      }
 
       try {
         const res = await fetch('/api/render-html', {
@@ -512,38 +525,32 @@
         if (!res.ok) throw new Error('Erreur lors du rendu HTML.');
 
         const html = await res.text();
-        DOM.pdfViewerFrame.srcdoc = html;
+        if (this.shadowRoot) {
+          this.shadowRoot.innerHTML = html;
+          const pages = this.shadowRoot.querySelectorAll('.cv-page');
+          this.pageCount = pages.length;
 
-        DOM.pdfViewerFrame.onload = () => {
-          DOM.pdfLoadingSpinner.classList.add('hidden');
-          try {
-            const doc = DOM.pdfViewerFrame.contentDocument || DOM.pdfViewerFrame.contentWindow.document;
-            if (doc) {
-              const pages = doc.querySelectorAll('.cv-page');
-              this.pageCount = pages.length;
-              const iframeHeight = pages.length >= 2 ? 2360 : 1200;
-              DOM.pdfViewerFrame.style.height = `${iframeHeight}px`;
-
-              if (DOM.btnPage2) {
-                if (this.pageCount >= 2) {
-                  DOM.btnPage2.classList.remove('opacity-40', 'cursor-not-allowed');
-                  DOM.btnPage2.removeAttribute('disabled');
-                  DOM.btnPage2.title = 'Aller à la page 2 (2)';
-                } else {
-                  DOM.btnPage2.classList.add('opacity-40', 'cursor-not-allowed');
-                  DOM.btnPage2.setAttribute('disabled', 'true');
-                  DOM.btnPage2.title = 'Le CV tient sur 1 seule page';
-                }
-              }
+          if (DOM.btnPage2) {
+            if (this.pageCount >= 2) {
+              DOM.btnPage2.classList.remove('opacity-40', 'cursor-not-allowed');
+              DOM.btnPage2.removeAttribute('disabled');
+              DOM.btnPage2.title = 'Aller à la page 2 (2)';
+            } else {
+              DOM.btnPage2.classList.add('opacity-40', 'cursor-not-allowed');
+              DOM.btnPage2.setAttribute('disabled', 'true');
+              DOM.btnPage2.title = 'Le CV tient sur 1 seule page';
             }
-          } catch (e) {
-            console.warn('Frame inspection warning:', e);
           }
+        }
+
+        if (!this._hasInitialFit) {
+          this._hasInitialFit = true;
           this.fitWidth(false);
-        };
+        }
       } catch (err) {
         console.error('Preview render error:', err);
-        DOM.pdfLoadingSpinner.classList.add('hidden');
+      } finally {
+        if (DOM.pdfLoadingSpinner) DOM.pdfLoadingSpinner.classList.add('hidden');
       }
     },
 
@@ -560,10 +567,32 @@
       if (DOM.btnZoomReset) DOM.btnZoomReset.addEventListener('click', () => this.zoomReset(true));
       if (DOM.btnFullscreen) DOM.btnFullscreen.addEventListener('click', () => this.toggleFullscreen());
 
+      if (DOM.btnOpenTab) {
+        DOM.btnOpenTab.addEventListener('click', async () => {
+          EditorController.saveCurrentForm();
+          if (DOM.pdfLoadingSpinner) DOM.pdfLoadingSpinner.classList.remove('hidden');
+          try {
+            const res = await fetch('/api/export-pdf', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ data: State.cvData, lang: State.previewLang })
+            });
+            const blob = await res.blob();
+            const blobUrl = URL.createObjectURL(blob);
+            window.open(blobUrl, '_blank');
+          } catch (e) {
+            console.error('Error opening PDF in new tab:', e);
+          } finally {
+            if (DOM.pdfLoadingSpinner) DOM.pdfLoadingSpinner.classList.add('hidden');
+          }
+        });
+      }
+
       // Pointer Drag to Pan (Canva/Figma style)
       const onPointerDown = (e) => {
         if (e.button !== 0 && e.button !== 1) return; // Only left or middle click
-        const canDrag = (this.currentTool === 'hand' || this.isSpacePressed || e.button === 1);
+        const isBackground = (e.target === DOM.pdfViewportContainer || e.target === DOM.pdfStage || e.target === DOM.pdfSheetContainer);
+        const canDrag = (this.currentTool === 'hand' || this.isSpacePressed || e.button === 1 || isBackground);
         if (!canDrag) return;
 
         this.isDragging = true;
@@ -572,8 +601,8 @@
         this.initialPanX = this.panX;
         this.initialPanY = this.panY;
 
-        if (DOM.pdfViewportContainer) DOM.pdfViewportContainer.style.cursor = 'grabbing';
-        if (DOM.pdfPanOverlay) DOM.pdfPanOverlay.style.cursor = 'grabbing';
+        if (DOM.pdfViewportContainer) DOM.pdfViewportContainer.classList.add('cursor-grabbing');
+        if (DOM.pdfPanOverlay) DOM.pdfPanOverlay.classList.add('cursor-grabbing');
       };
 
       const onPointerMove = (e) => {
@@ -588,9 +617,8 @@
       const onPointerUp = () => {
         if (this.isDragging) {
           this.isDragging = false;
-          const isHand = (this.currentTool === 'hand' || this.isSpacePressed);
-          if (DOM.pdfViewportContainer) DOM.pdfViewportContainer.style.cursor = isHand ? 'grab' : 'default';
-          if (DOM.pdfPanOverlay) DOM.pdfPanOverlay.style.cursor = isHand ? 'grab' : 'default';
+          if (DOM.pdfViewportContainer) DOM.pdfViewportContainer.classList.remove('cursor-grabbing');
+          if (DOM.pdfPanOverlay) DOM.pdfPanOverlay.classList.remove('cursor-grabbing');
         }
       };
 
@@ -615,7 +643,8 @@
         }, { passive: false });
 
         // Double click toggles between Fit Width and 100%
-        DOM.pdfViewportContainer.addEventListener('dblclick', () => {
+        DOM.pdfViewportContainer.addEventListener('dblclick', (e) => {
+          if (e.target.closest && e.target.closest('button, select, input, textarea')) return;
           if (Math.abs(this.zoom - 1.0) < 0.1) {
             this.fitWidth(true);
           } else {
@@ -632,7 +661,10 @@
 
         if (e.code === 'Space' && !this.isSpacePressed) {
           this.isSpacePressed = true;
-          if (DOM.pdfPanOverlay) DOM.pdfPanOverlay.style.pointerEvents = 'auto';
+          if (DOM.pdfPanOverlay) {
+            DOM.pdfPanOverlay.classList.remove('hidden');
+            DOM.pdfPanOverlay.style.pointerEvents = 'auto';
+          }
           if (DOM.pdfViewportContainer) DOM.pdfViewportContainer.style.cursor = 'grab';
         } else if (e.key === 'h' || e.key === 'H') {
           this.setTool('hand');
@@ -660,11 +692,17 @@
       window.addEventListener('keyup', (e) => {
         if (e.code === 'Space') {
           this.isSpacePressed = false;
+          const isHand = (this.currentTool === 'hand');
           if (DOM.pdfPanOverlay) {
-            DOM.pdfPanOverlay.style.pointerEvents = (this.currentTool === 'hand') ? 'auto' : 'none';
+            DOM.pdfPanOverlay.style.pointerEvents = isHand ? 'auto' : 'none';
+            if (isHand) {
+              DOM.pdfPanOverlay.classList.remove('hidden');
+            } else {
+              DOM.pdfPanOverlay.classList.add('hidden');
+            }
           }
           if (DOM.pdfViewportContainer) {
-            DOM.pdfViewportContainer.style.cursor = (this.currentTool === 'hand') ? 'grab' : 'default';
+            DOM.pdfViewportContainer.style.cursor = isHand ? 'grab' : 'default';
           }
         }
       });
@@ -725,6 +763,9 @@
           Utils.downloadBlob(blob, `CV_${name}_BURGEAP_2026.zip`);
         });
       }
+
+      // Initialize tool state
+      this.setTool('hand');
     }
   };
 

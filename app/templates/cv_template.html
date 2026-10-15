@@ -17,14 +17,14 @@
     text-rendering: optimizeLegibility;
   }
   
-  /* Screen wrapper centering */
+  /* Screen wrapper centering & Shadow DOM support */
   @media screen {
-    body {
+    :host, body {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 24px;
-      padding: 16px 8px;
+      padding: 0;
       background: transparent !important;
     }
   }

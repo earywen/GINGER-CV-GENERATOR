@@ -20,7 +20,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <!-- Cropper.js CSS -->
   <link rel="stylesheet" href="/static/vendor/cropper.min.css">
-  <link rel="stylesheet" href="/static/style.css?v=7">
+  <link rel="stylesheet" href="/static/style.css?v=11">
 
   <script>
     tailwind.config = {
@@ -466,13 +466,15 @@
           </div>
 
           <!-- Interactive Transform Stage -->
-          <div id="pdf-stage" class="absolute top-0 left-0 origin-top-left will-change-transform">
-            <div id="pdf-sheet-container" class="relative my-4 shadow-2xl rounded bg-white">
-              <iframe id="pdf-viewer-frame" class="border-0 bg-white block" style="width: 820px; height: 1200px;" src="about:blank"></iframe>
+          <div id="pdf-stage" class="absolute top-0 left-0 origin-top-left">
+            <div id="pdf-sheet-container" class="relative my-4">
+              <!-- Native Vector Shadow Host for crisp subpixel text rendering at any zoom -->
+              <div id="pdf-shadow-host" class="block"></div>
               <!-- Smooth Transparent Pointer Overlay -->
-              <div id="pdf-pan-overlay" class="absolute inset-0 cursor-grab z-10"></div>
+              <div id="pdf-pan-overlay" class="absolute inset-0 cursor-grab z-10 hidden"></div>
             </div>
           </div>
+
 
         </div>
 
@@ -558,7 +560,7 @@
   </div>
 
   <script src="/static/vendor/cropper.min.js"></script>
-  <script src="/static/app.js?v=10"></script>
+  <script src="/static/app.js?v=11"></script>
 </body>
 
 </html>
