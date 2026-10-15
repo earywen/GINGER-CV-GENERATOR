@@ -1,5 +1,20 @@
 /* Styles spécifiques pour le générateur de CV Ginger Burgeap */
 
+/* Themed text selection per Impeccable craft floor */
+::selection {
+  background-color: #96C63E;
+  color: #0e2846;
+}
+
+/* Caret theming */
+input, textarea, select, [contenteditable] {
+  caret-color: #13375f;
+}
+html.dark input, html.dark textarea, html.dark select, html.dark [contenteditable] {
+  caret-color: #96C63E;
+}
+
+/* Scrollbars - Light & Dark */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -8,16 +23,26 @@
 ::-webkit-scrollbar-track {
   background: #f1f5f9;
 }
+html.dark ::-webkit-scrollbar-track {
+  background: #0f172a;
+}
 
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
-  border-radius: 3px;
+  border-radius: 4px;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
 
+/* Form interactions */
 .ref-card {
   transition: all 0.2s ease-in-out;
 }
@@ -25,34 +50,68 @@
 .ref-card:hover {
   border-color: #13375f;
 }
+html.dark .ref-card:hover {
+  border-color: #96C63E;
+}
 
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: #13375f !important;
 }
+html.dark input:focus, html.dark textarea:focus, html.dark select:focus {
+  border-color: #96C63E !important;
+}
+
+/* Typography scale per DESIGN.md */
+body {
+  font-size: 14px;
+  color: #0f172a;
+}
+html.dark body {
+  color: #f8fafc;
+}
+
+h1 {
+  font-size: 24px;
+  color: #ffffff;
+}
+
+h2 {
+  font-size: 20px;
+  color: #13375f;
+}
+html.dark h2 {
+  color: #f8fafc;
+}
+
+h3 {
+  font-size: 16px;
+  color: #13375f;
+}
+html.dark h3 {
+  color: #f8fafc;
+}
 
 /* Zoom Container Styling */
 .pdf-viewport {
-  background: radial-gradient(circle, #334155 0%, #1e293b 100%);
+  background: radial-gradient(circle, #334155 0%, #0f172a 100%);
+  color: #f8fafc;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   overflow: auto;
   position: relative;
 }
+html.dark .pdf-viewport {
+  background: radial-gradient(circle, #1e293b 0%, #020617 100%);
+  color: #f8fafc;
+}
 
 #pdf-zoom-wrapper {
   transform-origin: top center;
   transition: transform 0.15s ease-out;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.6), 0 8px 15px -6px rgba(0, 0, 0, 0.4); /* impeccable-disable-line design-system-color -- Sheet elevation shadows */
   background: #ffffff;
-}
-
-/* Ensure smooth sticky scroll in dual-pane */
-@media (min-width: 1024px) {
-  .app-dual-pane {
-    height: calc(100vh - 6rem);
-  }
 }
 
 /* Circular Cropper Styling */
@@ -63,7 +122,7 @@ input:focus, textarea:focus, select:focus {
 
 .cropper-view-box {
   outline: 3px solid #ffffff !important;
-  box-shadow: 0 0 0 2000px rgba(15, 23, 42, 0.8) !important;
+  box-shadow: 0 0 0 2000px rgba(15, 23, 42, 0.85) !important;
 }
 
 .cropper-dashed,

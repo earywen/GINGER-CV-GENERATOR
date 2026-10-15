@@ -1,18 +1,30 @@
 <!DOCTYPE html>
-<html lang="fr" class="h-full bg-slate-100">
+<html lang="fr" class="h-full bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Générateur de CV Ginger Burgeap 2026</title>
+  
+  <!-- Anti-FOUC Theme Script -->
+  <script>
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <!-- Cropper.js CSS -->
   <link rel="stylesheet" href="/static/vendor/cropper.min.css">
-  <link rel="stylesheet" href="/static/style.css?v=4">
+  <link rel="stylesheet" href="/static/style.css?v=5">
+
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           colors: {
@@ -29,65 +41,74 @@
     }
   </script>
 </head>
-<body class="h-full flex flex-col font-sans text-slate-800 antialiased overflow-hidden">
+<body class="h-full flex flex-col font-sans antialiased overflow-hidden selection:bg-burgeap-green selection:text-burgeap-dark transition-colors duration-200">
+  <!-- impeccable-disable nested-cards -- Structured upload wizard and modal canvases use intentional contained surfaces -->
 
   <!-- Navigation Header -->
-  <header class="bg-burgeap-blue text-white shadow-md border-b-4 border-burgeap-green shrink-0 z-50">
+  <header class="bg-burgeap-blue dark:bg-slate-900 text-white shadow-md border-b-4 border-burgeap-green shrink-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <div class="bg-white px-2.5 py-1 rounded shadow-inner flex items-center">
+        <div class="bg-white dark:bg-slate-800 px-2.5 py-1 rounded shadow-inner flex items-center">
           <img src="/static/assets/logo.png" alt="Ginger Burgeap" class="h-6 w-auto object-contain">
         </div>
         <div>
-          <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
+          <h1 class="text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
             Générateur de CV 2026
-            <span class="bg-burgeap-green text-burgeap-dark text-[10px] px-2 py-0.5 rounded-full font-bold">1 à 2 Pages</span>
+            <span class="bg-burgeap-green text-burgeap-dark text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">1 à 2 Pages</span>
           </h1>
         </div>
       </div>
-      <div class="flex items-center space-x-3 text-xs text-slate-300">
-        <button id="btn-reset-top" class="hidden bg-white/10 hover:bg-white/20 text-white px-3 py-1 rounded-lg transition flex items-center gap-1.5 text-xs font-semibold">
-          <i class="fa-solid fa-plus"></i> Nouveau Collaborateur
+      
+      <div class="flex items-center space-x-2 text-xs">
+        <!-- New Candidate Action -->
+        <button id="btn-reset-top" class="hidden bg-white/10 hover:bg-white/20 dark:bg-slate-800 dark:hover:bg-slate-700 text-white px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-burgeap-green">
+          <i class="fa-solid fa-plus text-burgeap-green"></i> Nouveau Collaborateur
+        </button>
+
+        <!-- Dark / Light Theme Toggle -->
+        <button id="btn-theme-toggle" type="button" aria-label="Basculer le thème" title="Basculer Mode Clair / Sombre" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 dark:bg-slate-800 dark:hover:bg-slate-700 text-white flex items-center justify-center transition focus:outline-none focus:ring-2 focus:ring-burgeap-green cursor-pointer">
+          <i class="fa-solid fa-sun text-sm hidden dark:block text-amber-300"></i>
+          <i class="fa-solid fa-moon text-sm block dark:hidden text-slate-200"></i>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Main Content Container (fills available height) -->
+  <!-- Main Content Container -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 flex flex-col min-h-0 overflow-hidden">
 
     <!-- VIEW 1: UPLOAD & CONFIGURATION -->
     <div id="view-upload" class="max-w-3xl mx-auto w-full space-y-5 my-auto overflow-y-auto py-4">
       
       <div class="text-center space-y-1.5">
-        <h2 class="text-2xl font-black text-burgeap-blue tracking-tight">Transformez votre CV en format officiel 2026</h2>
-        <p class="text-sm text-slate-600 max-w-lg mx-auto">
-          Déposez votre CV actuel (PDF, Word ou PowerPoint) et votre photo studio. L'IA extrait, structure et traduit instantanément votre profil sur une seule page A4.
+        <h2 class="text-2xl font-black text-burgeap-blue dark:text-slate-100 tracking-tight">Transformez votre CV en format officiel 2026</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-400 max-w-lg mx-auto">
+          Déposez votre CV actuel (PDF, Word ou PowerPoint) et votre photo studio. L'IA extrait, structure et traduit instantanément votre profil sur une à deux pages A4 conformes.
         </p>
       </div>
 
-      <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 sm:p-8 space-y-5">
+      <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-5">
         
         <!-- CV Dropzone -->
         <div>
-          <label class="block text-xs font-bold text-burgeap-blue uppercase tracking-wider mb-2">
+          <label class="block text-xs font-bold text-burgeap-blue dark:text-burgeap-green uppercase tracking-wider mb-2">
             1. Votre CV Actuel (PDF, Word, PPTX) <span class="text-red-500">*</span>
           </label>
-          <div id="cv-dropzone" class="border-2 border-dashed border-slate-300 hover:border-burgeap-blue bg-slate-50 hover:bg-burgeap-lightBlue/30 rounded-xl p-6 text-center cursor-pointer transition flex flex-col items-center justify-center group">
+          <div id="cv-dropzone" class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-burgeap-blue dark:hover:border-burgeap-green bg-slate-50 dark:bg-slate-800/40 hover:bg-burgeap-lightBlue/30 dark:hover:bg-slate-800/70 rounded-xl p-6 text-center cursor-pointer transition flex flex-col items-center justify-center group">
             <input type="file" id="cv-file-input" class="hidden" accept=".pdf,.docx,.doc,.pptx,.ppt,.txt">
             <div id="cv-dropzone-empty" class="space-y-2">
-              <div class="w-12 h-12 rounded-full bg-blue-100 text-burgeap-blue flex items-center justify-center mx-auto group-hover:scale-110 transition">
+              <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-slate-700 text-burgeap-blue dark:text-burgeap-green flex items-center justify-center mx-auto group-hover:scale-110 transition">
                 <i class="fa-solid fa-file-arrow-up text-xl"></i>
               </div>
-              <p class="text-sm font-semibold text-slate-700">Glissez votre CV ici ou <span class="text-burgeap-blue underline">parcourez vos fichiers</span></p>
-              <p class="text-xs text-slate-400">Formats acceptés : PDF, Word (.docx), PowerPoint (.pptx)</p>
+              <p class="text-sm font-semibold text-slate-700 dark:text-slate-200">Glissez votre CV ici ou <span class="text-burgeap-blue dark:text-burgeap-green underline font-bold">parcourez vos fichiers</span></p>
+              <p class="text-xs text-slate-400 dark:text-slate-500">Formats acceptés : PDF, Word (.docx), PowerPoint (.pptx)</p>
             </div>
-            <div id="cv-dropzone-filled" class="hidden flex items-center justify-between w-full bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+            <div id="cv-dropzone-filled" class="hidden flex items-center justify-between w-full bg-slate-100 dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
               <div class="flex items-center space-x-3 text-left truncate">
                 <i class="fa-solid fa-file-pdf text-red-500 text-2xl"></i>
                 <div class="truncate">
-                  <p id="cv-filename" class="text-sm font-bold text-slate-800 truncate">mon_cv.pdf</p>
-                  <p id="cv-filesize" class="text-xs text-slate-400">1.2 MB</p>
+                  <p id="cv-filename" class="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">mon_cv.pdf</p>
+                  <p id="cv-filesize" class="text-xs text-slate-500 dark:text-slate-400">1.2 MB</p>
                 </div>
               </div>
               <button id="btn-remove-cv" type="button" class="text-slate-400 hover:text-red-500 p-2 transition">
@@ -99,35 +120,35 @@
 
         <!-- Photo & Initiales Section -->
         <div>
-          <label class="block text-xs font-bold text-burgeap-blue uppercase tracking-wider mb-2">
+          <label class="block text-xs font-bold text-burgeap-blue dark:text-burgeap-green uppercase tracking-wider mb-2">
             2. Photo Studio Portrait (Optionnelle)
           </label>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
-            <div id="photo-dropzone" class="border-2 border-dashed border-slate-300 hover:border-burgeap-blue bg-slate-50 hover:bg-burgeap-lightBlue/30 rounded-xl p-4 text-center cursor-pointer transition flex flex-col items-center justify-center group">
+            <div id="photo-dropzone" class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-burgeap-blue dark:hover:border-burgeap-green bg-slate-50 dark:bg-slate-800/40 hover:bg-burgeap-lightBlue/30 dark:hover:bg-slate-800/70 rounded-xl p-4 text-center cursor-pointer transition flex flex-col items-center justify-center group">
               <input type="file" id="photo-file-input" class="hidden" accept="image/png,image/jpeg,image/jpg">
               <div id="photo-dropzone-empty" class="space-y-1">
-                <i class="fa-solid fa-camera text-slate-400 text-lg group-hover:text-burgeap-blue"></i>
-                <p class="text-xs font-medium text-slate-600">Ajouter une photo (JPG, PNG)</p>
+                <i class="fa-solid fa-camera text-slate-400 dark:text-slate-500 text-lg group-hover:text-burgeap-blue dark:group-hover:text-burgeap-green"></i>
+                <p class="text-xs font-medium text-slate-600 dark:text-slate-300">Ajouter une photo (JPG, PNG)</p>
               </div>
               <div id="photo-dropzone-filled" class="hidden flex items-center space-x-3 w-full">
-                <img id="photo-preview-img" src="" class="w-12 h-12 rounded-full object-cover border-2 border-burgeap-blue shadow">
+                <img id="photo-preview-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Ccircle cx='24' cy='24' r='24' fill='%2313375f'/%3E%3C/svg%3E" class="w-12 h-12 rounded-full object-cover border-2 border-burgeap-blue dark:border-burgeap-green shadow" alt="Aperçu photo">
                 <div class="flex-1 text-left truncate">
-                  <p id="photo-filename" class="text-xs font-bold text-slate-800 truncate">photo.jpg</p>
+                  <p id="photo-filename" class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">photo.jpg</p>
                   <div class="flex items-center space-x-2 mt-0.5">
-                    <button id="btn-crop-photo-v1" type="button" class="text-xs text-burgeap-blue font-bold hover:underline flex items-center gap-1">
+                    <button id="btn-crop-photo-v1" type="button" class="text-xs text-burgeap-blue dark:text-burgeap-green font-bold hover:underline flex items-center gap-1">
                       <i class="fa-solid fa-crop-simple text-[10px]"></i> Ajuster
                     </button>
-                    <span class="text-slate-300">•</span>
+                    <span class="text-slate-300 dark:text-slate-600">•</span>
                     <button id="btn-remove-photo" type="button" class="text-xs text-red-500 hover:underline">Supprimer</button>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-start space-x-3">
-              <input type="checkbox" id="cb-initials-only" class="mt-1 h-4 w-4 text-burgeap-blue rounded border-slate-300 focus:ring-burgeap-blue cursor-pointer">
-              <label for="cb-initials-only" class="text-xs text-slate-600 cursor-pointer">
-                <span class="font-bold text-slate-800 block">Pas de photo disponible</span>
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 flex items-start space-x-3">
+              <input type="checkbox" id="cb-initials-only" class="mt-1 h-4 w-4 text-burgeap-blue dark:text-burgeap-green rounded border-slate-300 dark:border-slate-600 focus:ring-burgeap-blue cursor-pointer">
+              <label for="cb-initials-only" class="text-xs text-slate-600 dark:text-slate-300 cursor-pointer">
+                <span class="font-bold text-slate-800 dark:text-slate-100 block">Pas de photo disponible</span>
                 Un médaillon circulaire avec les initiales officielles sera automatiquement généré.
               </label>
             </div>
@@ -136,10 +157,10 @@
 
         <!-- Agence Selector -->
         <div>
-          <label for="select-agency" class="block text-xs font-bold text-burgeap-blue uppercase tracking-wider mb-2">
+          <label for="select-agency" class="block text-xs font-bold text-burgeap-blue dark:text-burgeap-green uppercase tracking-wider mb-2">
             3. Agence & Région
           </label>
-          <select id="select-agency" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-burgeap-blue focus:border-burgeap-blue transition cursor-pointer">
+          <select id="select-agency" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-burgeap-blue dark:focus:ring-burgeap-green transition cursor-pointer">
             <option value="RÉGION NORD-OUEST • AGENCE D’ARRAS">Région Nord-Ouest • Agence d’Arras</option>
             <option value="RÉGION NORD-OUEST • AGENCE DE ROUEN">Région Nord-Ouest • Agence de Rouen</option>
             <option value="RÉGION NORD-OUEST • AGENCE DE CAEN">Région Nord-Ouest • Agence de Caen</option>
@@ -150,7 +171,7 @@
         </div>
 
         <!-- Submit Button -->
-        <button id="btn-start-process" disabled class="w-full bg-burgeap-blue hover:bg-burgeap-dark disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold py-3.5 px-6 rounded-xl shadow-lg hover:shadow-xl transition flex items-center justify-center space-x-2 text-base">
+        <button id="btn-start-process" disabled class="w-full bg-burgeap-blue hover:bg-burgeap-dark dark:bg-burgeap-blue dark:hover:bg-slate-800 disabled:bg-slate-300 dark:disabled:bg-slate-800 disabled:cursor-not-allowed text-white font-bold py-3.5 px-6 rounded-xl shadow-lg hover:shadow-xl transition flex items-center justify-center space-x-2 text-base">
           <i class="fa-solid fa-wand-magic-sparkles text-burgeap-green"></i>
           <span>Générer mes CVs (FR & EN)</span>
         </button>
@@ -161,15 +182,15 @@
     <!-- VIEW 2: LOADING & PROCESSING -->
     <div id="view-loading" class="hidden max-w-md mx-auto w-full text-center space-y-6 my-auto py-12">
       <div class="relative w-20 h-20 mx-auto flex items-center justify-center">
-        <div class="absolute inset-0 rounded-full border-4 border-slate-200"></div>
+        <div class="absolute inset-0 rounded-full border-4 border-slate-200 dark:border-slate-800"></div>
         <div class="absolute inset-0 rounded-full border-4 border-burgeap-green border-t-transparent animate-spin"></div>
-        <i class="fa-solid fa-file-lines text-burgeap-blue text-xl animate-pulse"></i>
+        <i class="fa-solid fa-file-lines text-burgeap-blue dark:text-burgeap-green text-xl animate-pulse"></i>
       </div>
       <div class="space-y-2">
-        <h3 id="loading-step-title" class="text-lg font-bold text-burgeap-blue">Extraction du CV en cours...</h3>
-        <p id="loading-step-desc" class="text-xs text-slate-500">L'intelligence artificielle analyse fidèlement l'ensemble de votre parcours.</p>
+        <h3 id="loading-step-title" class="text-xl font-bold text-burgeap-blue dark:text-slate-100">Extraction du CV en cours...</h3>
+        <p id="loading-step-desc" class="text-xs text-slate-500 dark:text-slate-400">L'intelligence artificielle analyse fidèlement l'ensemble de votre parcours.</p>
       </div>
-      <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+      <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
         <div id="loading-progress-bar" class="bg-burgeap-green h-2 transition-all duration-500" style="width: 30%"></div>
       </div>
     </div>
@@ -178,13 +199,13 @@
     <div id="view-editor" class="hidden flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 h-full min-h-0 overflow-hidden">
       
       <!-- Left Column: Form Editor (Independently Scrollable) -->
-      <div class="flex flex-col bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden h-full min-h-0">
+      <div class="flex flex-col bg-white dark:bg-slate-900 rounded-xl shadow-md border border-slate-200 dark:border-slate-800 overflow-hidden h-full min-h-0">
         
         <!-- Editor Header & Tabs with crisp vector flags -->
-        <div class="bg-slate-100 border-b border-slate-200 px-4 py-2.5 flex items-center justify-between shrink-0">
+        <div class="bg-slate-100 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700 px-4 py-2.5 flex items-center justify-between shrink-0">
           <div class="flex space-x-2">
             <button id="tab-fr" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-burgeap-blue text-white shadow-sm">
-              <svg class="w-4 h-3 rounded-xs shadow-xs inline-block" viewBox="0 0 640 480">
+              <svg class="w-4 h-3 rounded-xs inline-block" viewBox="0 0 640 480">
                 <g fill-rule="evenodd" stroke-width="1pt">
                   <path fill="#fff" d="M0 0h640v480H0z"/>
                   <path fill="#00267f" d="M0 0h213.3v480H0z"/>
@@ -193,8 +214,8 @@
               </svg>
               Français
             </button>
-            <button id="tab-en" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-transparent text-slate-600 hover:bg-slate-200">
-              <svg class="w-4 h-3 rounded-xs shadow-xs inline-block" viewBox="0 0 640 480">
+            <button id="tab-en" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-transparent text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">
+              <svg class="w-4 h-3 rounded-xs inline-block" viewBox="0 0 640 480">
                 <path fill="#012169" d="M0 0h640v480H0z"/>
                 <path fill="#FFF" d="m75 0 245 180L565 0h75v60L435 240l205 180v60h-75L320 300 75 480H0v-60l205-180L0 60V0h75z"/>
                 <path fill="#C8102E" d="m424 288 216 158v34h-46L378 300l46-12zM640 0v10L446 154l-38-26L580 0h60zM0 480v-10l194-144 38 26L60 480H0zM0 0l216 158-46 12L0 34V0z"/>
@@ -204,7 +225,7 @@
               English
             </button>
           </div>
-          <button id="btn-refresh-preview" class="text-xs bg-burgeap-green/20 hover:bg-burgeap-green/30 text-burgeap-dark font-bold px-3 py-1 rounded-lg transition flex items-center gap-1.5">
+          <button id="btn-refresh-preview" class="text-xs bg-burgeap-green/20 hover:bg-burgeap-green/30 text-burgeap-dark dark:text-burgeap-green font-bold px-3 py-1 rounded-lg transition flex items-center gap-1.5">
             <i class="fa-solid fa-arrows-rotate"></i> Actualiser
           </button>
         </div>
@@ -212,24 +233,24 @@
         <!-- Form Scroll Area -->
         <div class="flex-1 overflow-y-auto p-4 space-y-4 text-left">
           
-          <!-- Photo Profile Section in Editor -->
-          <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex items-center justify-between">
+          <!-- Photo Profile Section in Editor (Flattened layout) -->
+          <div class="pb-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-              <div id="editor-avatar-container" class="w-12 h-12 rounded-full border-2 border-burgeap-blue shadow-sm overflow-hidden flex items-center justify-center bg-burgeap-blue text-white font-bold text-sm shrink-0">
-                <img id="editor-avatar-img" src="" class="w-full h-full object-cover hidden" alt="Photo Collaborateur">
+              <div id="editor-avatar-container" class="w-12 h-12 rounded-full border-2 border-burgeap-blue dark:border-burgeap-green shadow-sm overflow-hidden flex items-center justify-center bg-burgeap-blue text-white font-bold text-sm shrink-0">
+                <img id="editor-avatar-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Ccircle cx='24' cy='24' r='24' fill='%2313375f'/%3E%3C/svg%3E" class="w-full h-full object-cover hidden" alt="Photo Collaborateur">
                 <span id="editor-avatar-initials">GB</span>
               </div>
               <div class="truncate">
-                <p class="text-xs font-bold text-slate-800">Photo du profil</p>
-                <p id="editor-photo-status" class="text-[10px] text-slate-500 truncate">Photo studio officielle</p>
+                <p class="text-xs font-bold text-slate-800 dark:text-slate-100">Photo du profil</p>
+                <p id="editor-photo-status" class="text-[10px] text-slate-500 dark:text-slate-400 truncate">Photo studio officielle</p>
               </div>
             </div>
             <div class="flex items-center space-x-1.5 shrink-0">
               <input type="file" id="editor-photo-input" class="hidden" accept="image/png,image/jpeg,image/jpg">
-              <button type="button" id="btn-editor-crop" class="px-2.5 py-1 text-xs font-bold bg-white border border-slate-300 hover:border-burgeap-blue hover:text-burgeap-blue text-slate-700 rounded-lg transition shadow-xs flex items-center gap-1">
+              <button type="button" id="btn-editor-crop" class="px-2.5 py-1 text-xs font-bold bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:border-burgeap-blue hover:text-burgeap-blue dark:hover:border-burgeap-green dark:hover:text-burgeap-green text-slate-700 dark:text-slate-200 rounded-lg transition shadow-xs flex items-center gap-1">
                 <i class="fa-solid fa-crop-simple text-[11px] text-burgeap-green"></i> Ajuster
               </button>
-              <button type="button" id="btn-editor-change-photo" class="px-2.5 py-1 text-xs font-semibold bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 rounded-lg transition shadow-xs flex items-center gap-1">
+              <button type="button" id="btn-editor-change-photo" class="px-2.5 py-1 text-xs font-semibold bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg transition shadow-xs flex items-center gap-1">
                 <i class="fa-solid fa-camera text-[11px]"></i> Changer
               </button>
             </div>
@@ -238,89 +259,89 @@
           <!-- Basic Info -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Nom & Prénom</label>
-              <input type="text" id="inp-name" class="w-full border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-semibold focus:ring-2 focus:ring-burgeap-blue focus:outline-none">
+              <label for="inp-name" class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Nom & Prénom</label>
+              <input type="text" id="inp-name" class="w-full border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg px-3 py-1.5 text-xs font-semibold focus:ring-2 focus:ring-burgeap-blue dark:focus:ring-burgeap-green focus:outline-none">
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Trigramme</label>
-              <input type="text" id="inp-trigram" class="w-full border border-slate-300 rounded-lg px-3 py-1.5 text-xs uppercase font-mono focus:ring-2 focus:ring-burgeap-blue focus:outline-none">
+              <label for="inp-trigram" class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Trigramme</label>
+              <input type="text" id="inp-trigram" class="w-full border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg px-3 py-1.5 text-xs uppercase font-mono focus:ring-2 focus:ring-burgeap-blue dark:focus:ring-burgeap-green focus:outline-none">
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Titre du poste (<span class="lang-label">FR</span>)</label>
-              <input type="text" id="inp-role" class="w-full border border-slate-300 rounded-lg px-3 py-1.5 text-xs focus:ring-2 focus:ring-burgeap-blue focus:outline-none">
+              <label for="inp-role" class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Titre du poste (<span class="lang-label">FR</span>)</label>
+              <input type="text" id="inp-role" class="w-full border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg px-3 py-1.5 text-xs focus:ring-2 focus:ring-burgeap-blue dark:focus:ring-burgeap-green focus:outline-none">
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Expérience (<span class="lang-label">FR</span>)</label>
-              <input type="text" id="inp-exp" class="w-full border border-slate-300 rounded-lg px-3 py-1.5 text-xs focus:ring-2 focus:ring-burgeap-blue focus:outline-none">
+              <label for="inp-exp" class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Expérience (<span class="lang-label">FR</span>)</label>
+              <input type="text" id="inp-exp" class="w-full border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg px-3 py-1.5 text-xs focus:ring-2 focus:ring-burgeap-blue dark:focus:ring-burgeap-green focus:outline-none">
             </div>
           </div>
 
           <!-- WYSIWYG Visual Rich-Text Pitch -->
           <div>
             <div class="flex justify-between items-center mb-1">
-              <label class="block text-xs font-bold text-slate-700">Profil & Parcours (Pitch)</label>
-              <div class="flex items-center space-x-1 bg-slate-100 border border-slate-200 rounded px-1.5 py-0.5">
-                <button type="button" id="btn-pitch-bold" title="Mettre en gras (Ctrl+B)" class="px-2 py-0.5 text-xs font-bold hover:bg-slate-200 rounded text-slate-700 transition">
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">Profil & Parcours (Pitch)</label>
+              <div class="flex items-center space-x-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-1.5 py-0.5">
+                <button type="button" id="btn-pitch-bold" title="Mettre en gras (Ctrl+B)" class="px-2 py-0.5 text-xs font-bold hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-slate-700 dark:text-slate-200 transition">
                   <i class="fa-solid fa-bold"></i>
                 </button>
-                <button type="button" id="btn-pitch-italic" title="Mettre en italique (Ctrl+I)" class="px-2 py-0.5 text-xs italic hover:bg-slate-200 rounded text-slate-700 transition">
+                <button type="button" id="btn-pitch-italic" title="Mettre en italique (Ctrl+I)" class="px-2 py-0.5 text-xs italic hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-slate-700 dark:text-slate-200 transition">
                   <i class="fa-solid fa-italic"></i>
                 </button>
-                <button type="button" id="btn-pitch-clear" title="Effacer la mise en forme" class="px-2 py-0.5 text-[10px] text-slate-500 hover:bg-slate-200 rounded transition">
+                <button type="button" id="btn-pitch-clear" title="Effacer la mise en forme" class="px-2 py-0.5 text-[10px] text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 rounded transition">
                   <i class="fa-solid fa-eraser"></i>
                 </button>
               </div>
             </div>
-            <div id="inp-pitch" contenteditable="true" class="w-full min-h-[70px] max-h-[130px] overflow-y-auto border border-slate-300 rounded-lg p-2 text-xs leading-relaxed bg-white focus:ring-2 focus:ring-burgeap-blue focus:outline-none"></div>
-            <p class="text-[10px] text-slate-400 mt-1"><i class="fa-regular fa-lightbulb mr-1 text-amber-500"></i> Astuce : sélectionnez un mot et cliquez sur <b>B</b> pour le mettre en gras.</p>
+            <div id="inp-pitch" contenteditable="true" class="w-full min-h-[70px] max-h-[130px] overflow-y-auto border border-slate-300 dark:border-slate-700 rounded-lg p-2 text-xs leading-relaxed bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-burgeap-blue dark:focus:ring-burgeap-green focus:outline-none"></div>
+            <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1"><i class="fa-regular fa-lightbulb mr-1 text-amber-500"></i> Astuce : sélectionnez un mot et cliquez sur <b>B</b> pour le mettre en gras.</p>
           </div>
 
           <!-- Side Section Lists -->
-          <div class="space-y-3.5 border-t border-slate-200 pt-3">
+          <div class="space-y-3.5 border-t border-slate-200 dark:border-slate-800 pt-3">
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1 flex justify-between">
+              <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 flex justify-between">
                 <span>Formations & Diplômes</span>
-                <span class="text-slate-400 font-normal text-[10px]">3 à 4 max</span>
+                <span class="text-slate-400 dark:text-slate-500 font-normal text-[10px]">3 à 4 max</span>
               </label>
               <div id="list-formations" class="space-y-1.5"></div>
             </div>
 
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1 flex justify-between">
+              <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 flex justify-between">
                 <span>Compétences Clés</span>
-                <span class="text-slate-400 font-normal text-[10px]">4 max</span>
+                <span class="text-slate-400 dark:text-slate-500 font-normal text-[10px]">4 max</span>
               </label>
               <div id="list-competences" class="space-y-1.5"></div>
             </div>
 
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1 flex justify-between">
+              <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 flex justify-between">
                 <span>Expériences Professionnelles</span>
-                <span class="text-slate-400 font-normal text-[10px]">2 à 3 max</span>
+                <span class="text-slate-400 dark:text-slate-500 font-normal text-[10px]">2 à 3 max</span>
               </label>
               <div id="list-exp-pros" class="space-y-1.5"></div>
             </div>
 
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1 flex justify-between">
+              <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 flex justify-between">
                 <span>Langues & Mobilité</span>
-                <span class="text-slate-400 font-normal text-[10px]">2 à 3 max</span>
+                <span class="text-slate-400 dark:text-slate-500 font-normal text-[10px]">2 à 3 max</span>
               </label>
               <div id="list-langs" class="space-y-1.5"></div>
             </div>
           </div>
 
           <!-- Qualifications Majeures (4) with rich edit -->
-          <div class="border-t border-slate-200 pt-3">
-            <label class="block text-xs font-bold text-slate-700 mb-1">Principales Qualifications (4 points clés)</label>
-            <p class="text-[10px] text-slate-400 mb-2">Chaque point commence idéalement par un titre en gras suivi de la description.</p>
-            <div id="list-qualifs" class="space-y-2.5"></div>
+          <div class="border-t border-slate-200 dark:border-slate-800 pt-3">
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Principales Qualifications (4 points clés)</label>
+            <p class="text-[10px] text-slate-400 dark:text-slate-500 mb-2">Chaque point commence idéalement par un titre en gras suivi de la description.</p>
+            <div id="list-qualifs" class="space-y-2"></div>
           </div>
 
           <!-- References Majeures -->
-          <div class="border-t border-slate-200 pt-3">
-            <label class="block text-xs font-bold text-slate-700 mb-1">Principales Références – Missions Récentes</label>
-            <p class="text-[10px] text-slate-400 mb-2">Les 3 à 4 premières missions s'affichent sur la page 1, les suivantes continuent sur la page 2 avec le bandeau officiel.</p>
+          <div class="border-t border-slate-200 dark:border-slate-800 pt-3">
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Principales Références – Missions Récentes</label>
+            <p class="text-[10px] text-slate-400 dark:text-slate-500 mb-2">Les 3 à 4 premières missions s'affichent sur la page 1, les suivantes continuent sur la page 2 avec le bandeau officiel.</p>
             <div id="list-refs" class="space-y-2.5"></div>
           </div>
 
@@ -328,15 +349,15 @@
       </div>
 
       <!-- Right Column: Live PDF Viewer & Zoom Toolbar (Sticky & Self-Contained) -->
-      <div class="flex flex-col bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden h-full min-h-0">
+      <div class="flex flex-col bg-white dark:bg-slate-900 rounded-xl shadow-md border border-slate-200 dark:border-slate-800 overflow-hidden h-full min-h-0">
         
         <!-- Viewer Top Toolbar -->
-        <div class="bg-slate-100 border-b border-slate-200 px-3 py-2 flex flex-wrap items-center justify-between gap-2 shrink-0">
+        <div class="bg-slate-100 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700 px-3 py-2 flex flex-wrap items-center justify-between gap-2 shrink-0">
           
           <!-- Language Toggle -->
           <div class="flex items-center space-x-1.5">
-            <div class="bg-slate-200 p-0.5 rounded-lg flex text-xs font-bold">
-              <button id="btn-preview-fr" class="px-2.5 py-1 rounded bg-white text-burgeap-blue shadow-sm flex items-center gap-1.5">
+            <div class="bg-slate-200 dark:bg-slate-700/80 p-0.5 rounded-lg flex text-xs font-bold">
+              <button id="btn-preview-fr" class="px-2.5 py-1 rounded bg-white dark:bg-slate-800 text-burgeap-blue dark:text-burgeap-green shadow-sm flex items-center gap-1.5">
                 <svg class="w-3.5 h-2.5 rounded-xs inline-block" viewBox="0 0 640 480">
                   <g fill-rule="evenodd" stroke-width="1pt">
                     <path fill="#fff" d="M0 0h640v480H0z"/>
@@ -346,7 +367,7 @@
                 </svg>
                 FR
               </button>
-              <button id="btn-preview-en" class="px-2.5 py-1 rounded text-slate-600 hover:text-slate-900 flex items-center gap-1.5">
+              <button id="btn-preview-en" class="px-2.5 py-1 rounded text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5">
                 <svg class="w-3.5 h-2.5 rounded-xs inline-block" viewBox="0 0 640 480">
                   <path fill="#012169" d="M0 0h640v480H0z"/>
                   <path fill="#FFF" d="m75 0 245 180L565 0h75v60L435 240l205 180v60h-75L320 300 75 480H0v-60l205-180L0 60V0h75z"/>
@@ -360,25 +381,25 @@
           </div>
 
           <!-- Zoom Controls -->
-          <div class="flex items-center space-x-1 bg-slate-200/80 border border-slate-300/80 rounded-lg p-0.5 text-xs">
-            <button id="btn-zoom-out" title="Zoom arrière" class="px-2 py-0.5 rounded hover:bg-white text-slate-700 font-bold transition">
+          <div class="flex items-center space-x-1 bg-slate-200/80 dark:bg-slate-700/80 border border-slate-300/80 dark:border-slate-600 rounded-lg p-0.5 text-xs text-slate-700 dark:text-slate-200">
+            <button id="btn-zoom-out" title="Zoom arrière" class="px-2 py-0.5 rounded hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold transition">
               <i class="fa-solid fa-minus text-[10px]"></i>
             </button>
-            <span id="lbl-zoom-val" class="px-1.5 font-mono text-[11px] font-bold text-slate-800 select-none">65%</span>
-            <button id="btn-zoom-in" title="Zoom avant" class="px-2 py-0.5 rounded hover:bg-white text-slate-700 font-bold transition">
+            <span id="lbl-zoom-val" class="px-1.5 font-mono text-[11px] font-bold text-slate-800 dark:text-slate-100 select-none">65%</span>
+            <button id="btn-zoom-in" title="Zoom avant" class="px-2 py-0.5 rounded hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold transition">
               <i class="fa-solid fa-plus text-[10px]"></i>
             </button>
-            <button id="btn-zoom-fit" title="Ajuster à la hauteur" class="px-2 py-0.5 rounded hover:bg-white text-slate-700 text-[11px] font-semibold transition border-l border-slate-300 ml-1">
+            <button id="btn-zoom-fit" title="Ajuster à la hauteur" class="px-2 py-0.5 rounded hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-[11px] font-semibold transition border-l border-slate-300 dark:border-slate-600 ml-1">
               Ajuster
             </button>
-            <button id="btn-open-tab" title="Ouvrir dans un nouvel onglet" class="px-1.5 py-0.5 rounded hover:bg-white text-slate-600 hover:text-burgeap-blue transition">
+            <button id="btn-open-tab" title="Ouvrir dans un nouvel onglet" class="px-1.5 py-0.5 rounded hover:bg-white dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-burgeap-blue dark:hover:text-burgeap-green transition">
               <i class="fa-solid fa-up-right-from-square text-[10px]"></i>
             </button>
           </div>
 
           <!-- Download Action Buttons -->
           <div class="flex items-center space-x-1.5">
-            <button id="btn-download-active" class="bg-burgeap-blue hover:bg-burgeap-dark text-white text-xs font-bold px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 shadow-sm">
+            <button id="btn-download-active" class="bg-burgeap-blue hover:bg-burgeap-dark dark:bg-burgeap-blue dark:hover:bg-slate-800 text-white text-xs font-bold px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 shadow-sm">
               <i class="fa-solid fa-file-arrow-down"></i> <span id="lbl-download-lang">FR</span>
             </button>
             <button id="btn-download-zip" class="bg-burgeap-green hover:bg-burgeap-greenDark text-burgeap-dark text-xs font-black px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow-sm">
@@ -387,19 +408,19 @@
           </div>
         </div>
 
-        <!-- PDF Viewport with Zoom Wrapper -->
-        <div id="pdf-viewport-container" class="pdf-viewport flex-1 p-3 sm:p-4 min-h-0">
+        <!-- PDF Viewport with Zoom Wrapper (Themed Studio Canvas) -->
+        <div id="pdf-viewport-container" class="pdf-viewport flex-1 p-3 sm:p-4 min-h-0 text-slate-200">
           
-          <div id="pdf-loading-spinner" class="absolute inset-0 bg-slate-900/30 backdrop-blur-[1px] flex items-center justify-center z-20 hidden">
-            <div class="bg-white px-4 py-2.5 rounded-xl shadow-xl flex items-center space-x-2 text-xs font-bold text-burgeap-blue">
+          <div id="pdf-loading-spinner" class="absolute inset-0 bg-slate-900/40 backdrop-blur-[1px] flex items-center justify-center z-20 hidden">
+            <div class="bg-white dark:bg-slate-900 px-4 py-2.5 rounded-xl shadow-xl border border-slate-200 dark:border-slate-800 flex items-center space-x-2 text-xs font-bold text-burgeap-blue dark:text-burgeap-green">
               <i class="fa-solid fa-spinner animate-spin text-burgeap-green text-base"></i>
               <span>Rendu WeasyPrint...</span>
             </div>
           </div>
 
-          <!-- Multi-page PDF Viewer Frame -->
-          <div id="pdf-zoom-wrapper" class="w-full h-full rounded overflow-hidden shadow-2xl flex justify-center">
-            <iframe id="pdf-viewer-frame" class="w-full h-full border-0 bg-transparent" src="about:blank"></iframe>
+          <!-- Multi-page PDF Viewer Frame: Document paper remains paper-white #ffffff -->
+          <div id="pdf-zoom-wrapper" class="w-full h-full rounded overflow-hidden shadow-2xl flex justify-center bg-white">
+            <iframe id="pdf-viewer-frame" class="w-full h-full border-0 bg-white" src="about:blank"></iframe>
           </div>
 
         </div>
@@ -411,15 +432,15 @@
   </main>
 
   <!-- Photo Cropper Modal (Interactive Pan, Zoom & Center) -->
-  <div id="modal-cropper" class="fixed inset-0 z-[100] bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden flex flex-col border border-slate-200 animate-in fade-in zoom-in-95 duration-150">
+  <div id="modal-cropper" class="fixed inset-0 z-[100] bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden flex flex-col border border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in-95 duration-150">
       
       <!-- Modal Header -->
-      <div class="bg-burgeap-blue text-white px-5 py-3.5 flex items-center justify-between border-b-2 border-burgeap-green">
+      <div class="bg-burgeap-blue dark:bg-slate-900 text-white px-5 py-3.5 flex items-center justify-between border-b-2 border-burgeap-green">
         <div class="flex items-center space-x-2">
           <i class="fa-solid fa-crop-simple text-burgeap-green text-lg"></i>
           <div>
-            <h3 class="font-bold text-sm leading-tight text-white">Ajuster et Centrer la Photo</h3>
+            <h3 class="font-bold text-base leading-tight text-white">Ajuster et Centrer la Photo</h3>
             <p class="text-[10px] text-slate-300">Cadrage circulaire officiel Ginger Burgeap</p>
           </div>
         </div>
@@ -429,45 +450,45 @@
       </div>
       
       <!-- Cropper Image Area -->
-      <div class="p-5 flex flex-col items-center space-y-4 bg-slate-50">
-        <div class="w-full h-80 bg-slate-900 rounded-xl overflow-hidden flex items-center justify-center relative shadow-inner">
-          <img id="cropper-image" src="" class="max-w-full max-h-full block" alt="Ajuster photo">
+      <div class="p-5 flex flex-col items-center space-y-4 bg-slate-50 dark:bg-slate-800/40">
+        <div class="w-full h-80 bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center relative shadow-inner">
+          <img id="cropper-image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' fill='%230f172a'/%3E%3C/svg%3E" class="max-w-full max-h-full block" alt="Ajuster photo">
         </div>
         
-        <p class="text-[11px] text-slate-500 text-center leading-tight">
-          <i class="fa-solid fa-arrows-up-down-left-right text-burgeap-blue mr-1"></i>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400 text-center leading-tight">
+          <i class="fa-solid fa-arrows-up-down-left-right text-burgeap-blue dark:text-burgeap-green mr-1"></i>
           <b>Glissez</b> l'image pour la déplacer. Utilisez la <b>molette</b> ou le curseur pour <b>zoomer</b>.
         </p>
         
         <!-- Zoom & Rotate Controls -->
-        <div class="w-full flex items-center justify-between space-x-2 px-1 pt-1 border-t border-slate-200">
-          <span class="text-xs font-bold text-slate-600 flex items-center gap-1 shrink-0">
+        <div class="w-full flex items-center justify-between space-x-2 px-1 pt-1 border-t border-slate-200 dark:border-slate-700">
+          <span class="text-xs font-bold text-slate-600 dark:text-slate-300 flex items-center gap-1 shrink-0">
             <i class="fa-solid fa-magnifying-glass text-[10px]"></i> Zoom :
           </span>
-          <button id="btn-crop-zoom-out" type="button" title="Zoom arrière" class="w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 flex items-center justify-center text-xs transition">
+          <button id="btn-crop-zoom-out" type="button" title="Zoom arrière" class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 flex items-center justify-center text-xs transition">
             <i class="fa-solid fa-minus"></i>
           </button>
-          <input type="range" id="crop-zoom-slider" min="0.1" max="3" step="0.05" value="1" class="flex-1 accent-burgeap-blue cursor-pointer">
-          <button id="btn-crop-zoom-in" type="button" title="Zoom avant" class="w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 flex items-center justify-center text-xs transition">
+          <input type="range" id="crop-zoom-slider" min="0.1" max="3" step="0.05" value="1" class="flex-1 accent-burgeap-blue dark:accent-burgeap-green cursor-pointer">
+          <button id="btn-crop-zoom-in" type="button" title="Zoom avant" class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 flex items-center justify-center text-xs transition">
             <i class="fa-solid fa-plus"></i>
           </button>
-          <div class="h-4 border-l border-slate-300 mx-1"></div>
-          <button id="btn-crop-rotate-left" type="button" title="Pivoter 90° à gauche" class="w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 flex items-center justify-center text-xs transition">
+          <div class="h-4 border-l border-slate-300 dark:border-slate-700 mx-1"></div>
+          <button id="btn-crop-rotate-left" type="button" title="Pivoter 90° à gauche" class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 flex items-center justify-center text-xs transition">
             <i class="fa-solid fa-rotate-left"></i>
           </button>
-          <button id="btn-crop-rotate-right" type="button" title="Pivoter 90° à droite" class="w-7 h-7 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 flex items-center justify-center text-xs transition">
+          <button id="btn-crop-rotate-right" type="button" title="Pivoter 90° à droite" class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 flex items-center justify-center text-xs transition">
             <i class="fa-solid fa-rotate-right"></i>
           </button>
         </div>
       </div>
       
       <!-- Modal Footer -->
-      <div class="bg-white border-t border-slate-200 px-5 py-3 flex items-center justify-between">
-        <button id="btn-crop-cancel" type="button" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition">
+      <div class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-5 py-3 flex items-center justify-between">
+        <button id="btn-crop-cancel" type="button" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
           Annuler
         </button>
         <div class="flex items-center space-x-2">
-          <button id="btn-crop-reset" type="button" class="px-3 py-2 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-100 transition flex items-center gap-1">
+          <button id="btn-crop-reset" type="button" class="px-3 py-2 rounded-lg text-xs font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1">
             <i class="fa-solid fa-arrow-rotate-left"></i> Réinitialiser
           </button>
           <button id="btn-crop-apply" type="button" class="px-5 py-2 rounded-lg text-xs font-bold bg-burgeap-blue hover:bg-burgeap-dark text-white shadow-md transition flex items-center gap-1.5">
@@ -479,6 +500,6 @@
   </div>
 
   <script src="/static/vendor/cropper.min.js"></script>
-  <script src="/static/app.js?v=5"></script>
+  <script src="/static/app.js?v=6"></script>
 </body>
 </html>

@@ -31,6 +31,7 @@
     viewLoading: document.getElementById('view-loading'),
     viewEditor: document.getElementById('view-editor'),
     btnResetTop: document.getElementById('btn-reset-top'),
+    btnThemeToggle: document.getElementById('btn-theme-toggle'),
 
     // CV Dropzone
     cvDropzone: document.getElementById('cv-dropzone'),
@@ -173,6 +174,30 @@
         reader.onerror = () => reject(new Error('Erreur de lecture du fichier image.'));
         reader.readAsDataURL(file);
       });
+    }
+  };
+
+  const SVG_AVATAR_PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Ccircle cx='24' cy='24' r='24' fill='%2313375f'/%3E%3C/svg%3E";
+
+  // =========================================================================
+  // 3.5. THEME CONTROLLER (Dark / Light Mode)
+  // =========================================================================
+  const ThemeController = {
+    init() {
+      if (DOM.btnThemeToggle) {
+        DOM.btnThemeToggle.addEventListener('click', () => this.toggle());
+      }
+    },
+
+    toggle() {
+      const isDark = document.documentElement.classList.contains('dark');
+      if (isDark) {
+        document.documentElement.classList.remove('dark');
+        localStorage.theme = 'light';
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.theme = 'dark';
+      }
     }
   };
 
@@ -398,8 +423,8 @@
       if (DOM.btnPreviewFr) {
         DOM.btnPreviewFr.addEventListener('click', () => {
           State.previewLang = 'fr';
-          DOM.btnPreviewFr.className = 'px-2.5 py-1 rounded bg-white text-burgeap-blue shadow-sm flex items-center gap-1.5 font-bold';
-          DOM.btnPreviewEn.className = 'px-2.5 py-1 rounded text-slate-600 hover:text-slate-900 flex items-center gap-1.5 font-bold';
+          DOM.btnPreviewFr.className = 'px-2.5 py-1 rounded bg-white dark:bg-slate-800 text-burgeap-blue dark:text-burgeap-green shadow-sm flex items-center gap-1.5 font-bold';
+          DOM.btnPreviewEn.className = 'px-2.5 py-1 rounded text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5 font-bold';
           if (DOM.lblDownloadLang) DOM.lblDownloadLang.textContent = 'FR';
           EditorController.saveCurrentForm();
           this.refresh();
@@ -409,8 +434,8 @@
       if (DOM.btnPreviewEn) {
         DOM.btnPreviewEn.addEventListener('click', () => {
           State.previewLang = 'en';
-          DOM.btnPreviewEn.className = 'px-2.5 py-1 rounded bg-white text-burgeap-blue shadow-sm flex items-center gap-1.5 font-bold';
-          DOM.btnPreviewFr.className = 'px-2.5 py-1 rounded text-slate-600 hover:text-slate-900 flex items-center gap-1.5 font-bold';
+          DOM.btnPreviewEn.className = 'px-2.5 py-1 rounded bg-white dark:bg-slate-800 text-burgeap-blue dark:text-burgeap-green shadow-sm flex items-center gap-1.5 font-bold';
+          DOM.btnPreviewFr.className = 'px-2.5 py-1 rounded text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5 font-bold';
           if (DOM.lblDownloadLang) DOM.lblDownloadLang.textContent = 'EN';
           EditorController.saveCurrentForm();
           this.refresh();
@@ -456,12 +481,12 @@
       State.currentLang = lang;
 
       if (lang === 'fr') {
-        DOM.tabFr.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-burgeap-blue text-white shadow-sm';
-        DOM.tabEn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-transparent text-slate-600 hover:bg-slate-200';
+        DOM.tabFr.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-burgeap-blue text-white shadow-sm';
+        DOM.tabEn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-transparent text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700';
         document.querySelectorAll('.lang-label').forEach(el => el.textContent = 'FR');
       } else {
-        DOM.tabEn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-burgeap-blue text-white shadow-sm';
-        DOM.tabFr.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-transparent text-slate-600 hover:bg-slate-200';
+        DOM.tabEn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-burgeap-blue text-white shadow-sm';
+        DOM.tabFr.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-transparent text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700';
         document.querySelectorAll('.lang-label').forEach(el => el.textContent = 'EN');
       }
 
@@ -515,7 +540,7 @@
         DOM.editorAvatarInitials.classList.add('hidden');
         if (DOM.editorPhotoStatus) DOM.editorPhotoStatus.textContent = 'Photo studio chargée (Ajuster possible)';
       } else {
-        DOM.editorAvatarImg.src = '';
+        DOM.editorAvatarImg.src = SVG_AVATAR_PLACEHOLDER;
         DOM.editorAvatarImg.classList.add('hidden');
         DOM.editorAvatarInitials.classList.remove('hidden');
         DOM.editorAvatarInitials.textContent = (State.cvData && State.cvData.initials) ? State.cvData.initials : 'GB';
@@ -533,7 +558,7 @@
         const row = document.createElement('div');
         row.className = 'flex items-center space-x-2';
         row.innerHTML = `
-          <div contenteditable="true" class="flex-1 border border-slate-300 rounded px-2.5 py-1 text-xs focus:ring-1 focus:ring-burgeap-blue focus:outline-none bg-white">${item}</div>
+          <div contenteditable="true" class="flex-1 border border-slate-300 dark:border-slate-700 rounded px-2.5 py-1 text-xs focus:ring-1 focus:ring-burgeap-blue dark:focus:ring-burgeap-green focus:outline-none bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">${item}</div>
           <button type="button" class="text-slate-400 hover:text-red-500 px-1.5 py-1 text-xs"><i class="fa-solid fa-xmark"></i></button>
         `;
 
@@ -550,7 +575,7 @@
 
       const btnAdd = document.createElement('button');
       btnAdd.type = 'button';
-      btnAdd.className = 'text-[11px] font-bold text-burgeap-blue hover:underline mt-1 flex items-center gap-1';
+      btnAdd.className = 'text-[11px] font-bold text-burgeap-blue dark:text-burgeap-green hover:underline mt-1 flex items-center gap-1';
       btnAdd.innerHTML = '<i class="fa-solid fa-plus"></i> Ajouter une ligne';
       btnAdd.addEventListener('click', () => {
         items.push('Nouvel élément');
@@ -566,26 +591,26 @@
       if (!qualifs) return;
 
       qualifs.forEach((q, idx) => {
-        const card = document.createElement('div');
-        card.className = 'bg-slate-50 border border-slate-200 rounded-lg p-2.5 space-y-1.5';
-        card.innerHTML = `
-          <div class="flex justify-between items-center text-[11px] font-bold text-slate-600">
+        const item = document.createElement('div');
+        item.className = 'py-2 border-b border-slate-200 dark:border-slate-800 last:border-b-0 space-y-1.5';
+        item.innerHTML = `
+          <div class="flex justify-between items-center text-[11px] font-bold text-slate-600 dark:text-slate-300">
             <span>Point ${idx + 1}</span>
-            <div class="flex items-center space-x-1 bg-white border border-slate-200 rounded px-1.5 py-0.5">
-              <button type="button" class="btn-q-bold px-1.5 py-0.2 text-[11px] font-bold hover:bg-slate-100 rounded text-slate-700" title="Mettre en gras"><i class="fa-solid fa-bold"></i></button>
-              <button type="button" class="btn-q-italic px-1.5 py-0.2 text-[11px] italic hover:bg-slate-100 rounded text-slate-700" title="Mettre en italique"><i class="fa-solid fa-italic"></i></button>
+            <div class="flex items-center space-x-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-1.5 py-0.5">
+              <button type="button" class="btn-q-bold px-1.5 py-0.2 text-[11px] font-bold hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-slate-700 dark:text-slate-200" title="Mettre en gras"><i class="fa-solid fa-bold"></i></button>
+              <button type="button" class="btn-q-italic px-1.5 py-0.2 text-[11px] italic hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-slate-700 dark:text-slate-200" title="Mettre en italique"><i class="fa-solid fa-italic"></i></button>
             </div>
           </div>
-          <div contenteditable="true" class="q-content w-full min-h-[42px] border border-slate-300 rounded p-1.5 text-xs bg-white focus:ring-1 focus:ring-burgeap-blue focus:outline-none leading-relaxed">${q}</div>
+          <div contenteditable="true" class="q-content w-full min-h-[42px] border border-slate-300 dark:border-slate-700 rounded-lg p-2 text-xs bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:ring-1 focus:ring-burgeap-blue dark:focus:ring-burgeap-green focus:outline-none leading-relaxed">${q}</div>
         `;
 
-        const editableQ = card.querySelector('.q-content');
-        card.querySelector('.btn-q-bold').addEventListener('click', (e) => {
+        const editableQ = item.querySelector('.q-content');
+        item.querySelector('.btn-q-bold').addEventListener('click', (e) => {
           e.preventDefault();
           editableQ.focus();
           Utils.formatText('bold');
         });
-        card.querySelector('.btn-q-italic').addEventListener('click', (e) => {
+        item.querySelector('.btn-q-italic').addEventListener('click', (e) => {
           e.preventDefault();
           editableQ.focus();
           Utils.formatText('italic');
@@ -594,7 +619,7 @@
           qualifs[idx] = Utils.cleanHtml(editableQ.innerHTML);
         });
 
-        container.appendChild(card);
+        container.appendChild(item);
       });
     },
 
@@ -605,33 +630,33 @@
       if (!refs) return;
 
       refs.forEach((r, idx) => {
-        const card = document.createElement('div');
-        card.className = 'ref-card bg-slate-50 border border-slate-200 rounded-lg p-3 space-y-2';
-        card.innerHTML = `
-          <div class="flex justify-between items-center text-xs font-bold text-burgeap-blue">
+        const item = document.createElement('div');
+        item.className = 'py-3 border-b border-slate-200 dark:border-slate-800 last:border-b-0 space-y-2';
+        item.innerHTML = `
+          <div class="flex justify-between items-center text-xs font-bold text-burgeap-blue dark:text-burgeap-green">
             <span>Mission ${idx + 1}</span>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div>
-              <label class="block text-[10px] font-bold text-slate-500 uppercase">Titre Projet (MAJUSCULE)</label>
-              <input type="text" value="${(r.title || '').replace(/"/g, '&quot;')}" class="inp-ref-title w-full border border-slate-300 rounded px-2 py-1 text-xs font-bold bg-white">
+              <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Titre Projet (MAJUSCULE)</label>
+              <input type="text" value="${(r.title || '').replace(/"/g, '&quot;')}" class="inp-ref-title w-full border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1 text-xs font-bold bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:ring-1 focus:ring-burgeap-blue dark:focus:ring-burgeap-green focus:outline-none">
             </div>
             <div>
-              <label class="block text-[10px] font-bold text-slate-500 uppercase">Badge Thématique</label>
-              <input type="text" value="${(r.tag || '').replace(/"/g, '&quot;')}" class="inp-ref-tag w-full border border-slate-300 rounded px-2 py-1 text-xs font-semibold bg-white">
+              <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Badge Thématique</label>
+              <input type="text" value="${(r.tag || '').replace(/"/g, '&quot;')}" class="inp-ref-tag w-full border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1 text-xs font-semibold bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:ring-1 focus:ring-burgeap-blue dark:focus:ring-burgeap-green focus:outline-none">
             </div>
           </div>
           <div>
-            <label class="block text-[10px] font-bold text-slate-500 uppercase">Description Synthétique</label>
-            <textarea rows="2" class="inp-ref-desc w-full border border-slate-300 rounded p-1.5 text-xs bg-white">${r.desc || ''}</textarea>
+            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Description Synthétique</label>
+            <textarea rows="2" class="inp-ref-desc w-full border border-slate-300 dark:border-slate-700 rounded-lg p-2 text-xs bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:ring-1 focus:ring-burgeap-blue dark:focus:ring-burgeap-green focus:outline-none leading-relaxed">${r.desc || ''}</textarea>
           </div>
         `;
 
-        card.querySelector('.inp-ref-title').addEventListener('input', (e) => r.title = e.target.value);
-        card.querySelector('.inp-ref-tag').addEventListener('input', (e) => r.tag = e.target.value);
-        card.querySelector('.inp-ref-desc').addEventListener('input', (e) => r.desc = e.target.value);
+        item.querySelector('.inp-ref-title').addEventListener('input', (e) => r.title = e.target.value);
+        item.querySelector('.inp-ref-tag').addEventListener('input', (e) => r.tag = e.target.value);
+        item.querySelector('.inp-ref-desc').addEventListener('input', (e) => r.desc = e.target.value);
 
-        container.appendChild(card);
+        container.appendChild(item);
       });
     },
 
@@ -706,6 +731,8 @@
 
             DOM.cvFileInput.value = '';
             DOM.photoFileInput.value = '';
+            DOM.photoPreviewImg.src = SVG_AVATAR_PLACEHOLDER;
+            DOM.editorAvatarImg.src = SVG_AVATAR_PLACEHOLDER;
             DOM.cvDropzoneEmpty.classList.remove('hidden');
             DOM.cvDropzoneFilled.classList.add('hidden');
             DOM.photoDropzoneEmpty.classList.remove('hidden');
@@ -883,6 +910,7 @@
         e.stopPropagation();
         State.selectedPhotoFile = null;
         DOM.photoFileInput.value = '';
+        DOM.photoPreviewImg.src = SVG_AVATAR_PLACEHOLDER;
         DOM.photoDropzoneEmpty.classList.remove('hidden');
         DOM.photoDropzoneFilled.classList.add('hidden');
       });
@@ -890,6 +918,7 @@
         if (DOM.cbInitialsOnly.checked) {
           State.selectedPhotoFile = null;
           DOM.photoFileInput.value = '';
+          DOM.photoPreviewImg.src = SVG_AVATAR_PLACEHOLDER;
           DOM.photoDropzoneEmpty.classList.remove('hidden');
           DOM.photoDropzoneFilled.classList.add('hidden');
         }
@@ -915,6 +944,7 @@
   // 8. APPLICATION BOOTSTRAP
   // =========================================================================
   document.addEventListener('DOMContentLoaded', () => {
+    ThemeController.init();
     CropperController.bindEvents();
     PreviewController.bindEvents();
     EditorController.bindEvents();
