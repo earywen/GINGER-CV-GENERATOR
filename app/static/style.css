@@ -82,6 +82,8 @@ body {
 
 h1 {
   font-size: 24px;
+}
+header h1 {
   color: #ffffff;
 }
 
@@ -165,4 +167,20 @@ html.dark .pdf-viewport {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Modal Pop-In Animation (About & Help Modal) */
+@keyframes modalPopIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.94) translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-modal-pop {
+  animation: modalPopIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

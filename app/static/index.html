@@ -24,7 +24,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <!-- Cropper.js CSS -->
   <link rel="stylesheet" href="/static/vendor/cropper.min.css">
-  <link rel="stylesheet" href="/static/style.css?v=16">
+  <link rel="stylesheet" href="/static/style.css?v=17">
 
   <script>
     tailwind.config = {
@@ -68,6 +68,12 @@
         <!-- New Candidate Action -->
         <button id="btn-reset-top" class="hidden bg-white/10 hover:bg-white/20 dark:bg-slate-800 dark:hover:bg-slate-700 text-white px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-burgeap-green">
           <i class="fa-solid fa-plus text-burgeap-green"></i> Nouveau Collaborateur
+        </button>
+
+        <!-- About / Help Modal Button -->
+        <button id="btn-about" type="button" aria-label="À propos de l'application et guide d'utilisation" title="À propos & Guide d'utilisation" class="h-8 px-2.5 rounded-lg bg-white/10 hover:bg-white/20 dark:bg-slate-800 dark:hover:bg-slate-700 text-white flex items-center gap-1.5 transition text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-burgeap-green cursor-pointer">
+          <i class="fa-solid fa-circle-question text-burgeap-green text-sm"></i>
+          <span class="hidden sm:inline">À propos</span>
         </button>
 
         <!-- Dark / Light Theme Toggle -->
@@ -470,6 +476,258 @@
 
   </main>
 
+  <!-- Modal À Propos & Aide -->
+  <div id="modal-about" class="fixed inset-0 z-[110] bg-slate-950/75 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-5" role="dialog" aria-modal="true" aria-labelledby="modal-about-title">
+    <div id="modal-about-content" class="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col max-h-[90vh] overflow-hidden animate-modal-pop">
+      
+      <!-- Modal Header -->
+      <div class="bg-gradient-to-r from-burgeap-blue via-burgeap-blue to-burgeap-dark dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 px-5 sm:px-6 py-4 flex items-center justify-between border-b-2 border-burgeap-green text-white shrink-0">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-burgeap-green text-lg shrink-0">
+            <i class="fa-solid fa-circle-info"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 id="modal-about-title" class="font-bold text-base sm:text-lg leading-tight text-white">Générateur de CV Ginger Burgeap</h3>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-burgeap-green/20 text-burgeap-green border border-burgeap-green/30">v2.4.0</span>
+            </div>
+            <p class="text-xs text-slate-300 mt-0.5">Outil officiel de standardisation & d'ingénierie des CV d'experts</p>
+          </div>
+        </div>
+        <button id="btn-about-close" type="button" aria-label="Fermer la fenêtre" class="w-8 h-8 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition flex items-center justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-burgeap-green">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Tab Navigation -->
+      <div class="flex border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/50 px-4 sm:px-6 shrink-0 text-xs font-semibold" role="tablist">
+        <button id="tab-about-desc" role="tab" aria-selected="true" class="py-3 px-3.5 border-b-2 border-burgeap-blue dark:border-burgeap-green text-burgeap-blue dark:text-burgeap-green font-bold flex items-center gap-2 transition cursor-pointer">
+          <i class="fa-solid fa-bullseye"></i> Présentation
+        </button>
+        <button id="tab-about-guide" role="tab" aria-selected="false" class="py-3 px-3.5 border-b-2 border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex items-center gap-2 transition cursor-pointer">
+          <i class="fa-solid fa-compass"></i> Mode d'emploi
+        </button>
+        <button id="tab-about-credits" role="tab" aria-selected="false" class="py-3 px-3.5 border-b-2 border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 flex items-center gap-2 transition cursor-pointer">
+          <i class="fa-solid fa-code"></i> Crédits & Versions
+        </button>
+      </div>
+
+      <!-- Tab Panels Container (Scrollable) -->
+      <div class="p-5 sm:p-6 overflow-y-auto space-y-5 text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+        
+        <!-- PANEL 1: Présentation / À quoi sert l'outil -->
+        <div id="panel-about-desc" role="tabpanel" class="space-y-5">
+          <div class="pb-3 border-b border-slate-200 dark:border-slate-800">
+            <h4 class="font-bold text-burgeap-blue dark:text-burgeap-green text-sm flex items-center gap-2 mb-1">
+              <i class="fa-solid fa-award text-burgeap-green"></i> Standardisation & Excellence pour les Appels d'Offres
+            </h4>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+              Dans les réponses aux marchés publics et privés, la cohérence, l'exactitude technique et l'élégance visuelle des profils d'ingénieurs sont déterminantes. Ce générateur transforme n'importe quel CV hétérogène en un document officiel harmonisé selon la charte graphique Ginger Burgeap.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-lg bg-burgeap-blue/10 dark:bg-burgeap-green/10 text-burgeap-blue dark:text-burgeap-green flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+              </div>
+              <div>
+                <h5 class="font-bold text-slate-900 dark:text-slate-100 text-xs">Extraction IA Avancée</h5>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-normal">
+                  Analyse sémantique assistée par LLM pour extraire formations, compétences clés, qualifications réglementaires et références chantiers chiffrées.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-lg bg-burgeap-blue/10 dark:bg-burgeap-green/10 text-burgeap-blue dark:text-burgeap-green flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
+                <i class="fa-solid fa-file-pdf"></i>
+              </div>
+              <div>
+                <h5 class="font-bold text-slate-900 dark:text-slate-100 text-xs">Conformité 1 ou 2 Pages A4</h5>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-normal">
+                  Calibrage typographique strict empêchant les dépassements orphelins, respectant la grille institutionnelle Ginger Burgeap.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-lg bg-burgeap-blue/10 dark:bg-burgeap-green/10 text-burgeap-blue dark:text-burgeap-green flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
+                <i class="fa-solid fa-language"></i>
+              </div>
+              <div>
+                <h5 class="font-bold text-slate-900 dark:text-slate-100 text-xs">Bilinguisme Français / Anglais</h5>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-normal">
+                  Traduction et bascule instantanée entre la version française et anglaise du profil, exportable en un clic ou en archive groupée ZIP.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-lg bg-burgeap-blue/10 dark:bg-burgeap-green/10 text-burgeap-blue dark:text-burgeap-green flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
+                <i class="fa-solid fa-bolt"></i>
+              </div>
+              <div>
+                <h5 class="font-bold text-slate-900 dark:text-slate-100 text-xs">Live Preview & Sauvegarde</h5>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-normal">
+                  Rendu vectoriel réactif mis à jour pendant votre frappe et persistance de session pour sécuriser votre travail contre les fermetures accidentelles.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL 2: Mode d'emploi -->
+        <div id="panel-about-guide" role="tabpanel" class="hidden space-y-4">
+          <div class="space-y-4">
+            <div class="flex items-start gap-3.5">
+              <div class="w-6 h-6 rounded-full bg-burgeap-blue dark:bg-burgeap-green text-white dark:text-slate-900 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 shadow-xs">1</div>
+              <div>
+                <h5 class="font-bold text-slate-900 dark:text-slate-100 text-xs">Déposez votre CV et votre Photo</h5>
+                <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5 leading-relaxed">
+                  Glissez votre CV au format PDF, Word (.docx) ou PowerPoint (.pptx). Ajoutez un portrait photo (ou cochez les initiales). Sélectionnez votre agence de rattachement puis cliquez sur <strong>Lancer la Génération</strong>.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3.5">
+              <div class="w-6 h-6 rounded-full bg-burgeap-blue dark:bg-burgeap-green text-white dark:text-slate-900 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 shadow-xs">2</div>
+              <div>
+                <h5 class="font-bold text-slate-900 dark:text-slate-100 text-xs">Ajustez les Données dans l'Éditeur</h5>
+                <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5 leading-relaxed">
+                  Dans le panneau gauche, affinez l'accroche professionnelle, complétez vos formations et projets clés. Utilisez l'outil de <strong>recadrage photo</strong> pour centrer votre visage en cercle parfait. Tout s'actualise en direct à droite.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3.5">
+              <div class="w-6 h-6 rounded-full bg-burgeap-blue dark:bg-burgeap-green text-white dark:text-slate-900 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 shadow-xs">3</div>
+              <div>
+                <h5 class="font-bold text-slate-900 dark:text-slate-100 text-xs">Naviguez et Exportez en Haute Fidélité</h5>
+                <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5 leading-relaxed">
+                  Naviguez sur le canevas vectoriel avec la molette ou le mode main. Vérifiez le rendu bilingue avec le toggle FR/EN. Téléchargez ensuite le <strong>PDF certifié</strong> ou l'archive <strong>ZIP</strong> pour intégrer directement vos dossiers d'offres.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3 bg-amber-500/10 border-l-2 border-amber-500 rounded-r-lg text-amber-800 dark:text-amber-300 text-xs flex items-center gap-2">
+            <i class="fa-solid fa-lightbulb text-amber-500 shrink-0"></i>
+            <span><strong>Bon à savoir :</strong> La mise en page 1 ou 2 pages s'adapte automatiquement selon le volume de texte pour garantir un document aéré sans blanc disgracieux ni dépassement de saut de page.</span>
+          </div>
+        </div>
+
+        <!-- PANEL 3: Crédits & Versions -->
+        <div id="panel-about-credits" role="tabpanel" class="hidden space-y-4">
+          <!-- Author Section -->
+          <div class="pb-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+            <div class="flex items-center space-x-3.5">
+              <div class="w-11 h-11 rounded-full bg-burgeap-blue text-white flex items-center justify-center font-bold text-sm shadow-xs border-2 border-burgeap-green shrink-0">
+                LB
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h5 class="font-bold text-slate-900 dark:text-slate-100 text-sm">Laurent BRIGAUD</h5>
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-burgeap-blue text-white dark:bg-burgeap-green dark:text-slate-950">Concepteur & Développeur</span>
+                </div>
+                <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Ginger Burgeap · Direction de l'Ingénierie & Transformation Numérique</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Technical Stack -->
+          <div>
+            <h5 class="text-xs font-bold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-1.5 uppercase tracking-wider">
+              <i class="fa-solid fa-microchip text-burgeap-green"></i> Architecture & Technologies
+            </h5>
+            <div class="flex flex-wrap gap-1.5 text-[11px]">
+              <span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-mono">Python 3.12 / FastAPI</span>
+              <span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-mono">WeasyPrint (Vector PDF Paged Media)</span>
+              <span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-mono">Claude 3.5 Sonnet / AGY LLM</span>
+              <span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-mono">Tailwind CSS (Vanilla JS réactif)</span>
+              <span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-mono">Shadow DOM Vector Engine</span>
+            </div>
+          </div>
+
+          <!-- Changelog -->
+          <div class="pt-2">
+            <h5 class="text-xs font-bold text-slate-800 dark:text-slate-200 mb-2.5 flex items-center gap-1.5 uppercase tracking-wider">
+              <i class="fa-solid fa-timeline text-burgeap-green"></i> Historique des Versions
+            </h5>
+            <div class="space-y-2.5 border-l-2 border-slate-200 dark:border-slate-800 pl-3.5 ml-1">
+              
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-slate-900 dark:text-slate-100 text-xs">v2.4.0</span>
+                  <span class="text-[10px] text-slate-400">Actuelle</span>
+                </div>
+                <ul class="text-[11px] text-slate-600 dark:text-slate-400 list-disc list-inside mt-0.5 space-y-0.5">
+                  <li>Live Preview réactive : actualisation automatique instantanée à la frappe sans perte de focus.</li>
+                  <li>Intemporalité de la charte : suppression de toute mention millésimée 2026.</li>
+                  <li>Ajout de la fenêtre modale interactive « À propos & Guide d'utilisation ».</li>
+                </ul>
+              </div>
+
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-slate-900 dark:text-slate-100 text-xs">v2.3.0</span>
+                </div>
+                <ul class="text-[11px] text-slate-600 dark:text-slate-400 list-disc list-inside mt-0.5 space-y-0.5">
+                  <li>Prévisualisation vectorielle haute fidélité (Shadow DOM) : zoom net sans pixellisation bitmap.</li>
+                  <li>Navigation Canvas/Figma avec butées intelligentes pour empêcher la perte de vue hors-champ.</li>
+                </ul>
+              </div>
+
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-slate-900 dark:text-slate-100 text-xs">v2.2.0</span>
+                </div>
+                <ul class="text-[11px] text-slate-600 dark:text-slate-400 list-disc list-inside mt-0.5 space-y-0.5">
+                  <li>Persistance automatique de session (serveur + local) résiliente aux rechargements accidentels.</li>
+                  <li>Mise en cache SHA-256 des extractions IA pour préserver les ressources.</li>
+                </ul>
+              </div>
+
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-slate-900 dark:text-slate-100 text-xs">v2.1.0</span>
+                </div>
+                <ul class="text-[11px] text-slate-600 dark:text-slate-400 list-disc list-inside mt-0.5 space-y-0.5">
+                  <li>Harmonisation des barres d'outils et sélecteur de langue bilingue FR/EN unifié.</li>
+                  <li>Optimisation pleine largeur de l'espace écran (Dual-Pane edge-to-edge).</li>
+                </ul>
+              </div>
+
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-slate-900 dark:text-slate-100 text-xs">v2.0.0</span>
+                </div>
+                <ul class="text-[11px] text-slate-600 dark:text-slate-400 list-disc list-inside mt-0.5 space-y-0.5">
+                  <li>Mode Sombre (Dark Mode) complet avec contraste accessible.</li>
+                  <li>Outil de cadrage circulaire interactif de photo studio.</li>
+                </ul>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="bg-slate-50 dark:bg-slate-950 px-5 sm:px-6 py-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+          <span class="w-2 h-2 rounded-full bg-burgeap-green"></span>
+          <span>Ginger Burgeap · Ingénierie & Conseil</span>
+        </div>
+        <button id="btn-about-footer-close" type="button" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-burgeap-blue hover:bg-burgeap-dark dark:bg-slate-800 dark:hover:bg-slate-700 text-white transition focus:outline-none focus:ring-2 focus:ring-burgeap-green cursor-pointer">
+          Fermer
+        </button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Photo Cropper Modal (Interactive Pan, Zoom & Center) -->
   <div id="modal-cropper" class="fixed inset-0 z-[100] bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden flex flex-col border border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in-95 duration-150">
@@ -546,7 +804,7 @@
   </div>
 
   <script src="/static/vendor/cropper.min.js"></script>
-  <script src="/static/app.js?v=16"></script>
+  <script src="/static/app.js?v=17"></script>
 </body>
 
 </html>
