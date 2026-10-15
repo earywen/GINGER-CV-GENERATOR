@@ -66,8 +66,6 @@
     tabFr: document.getElementById('tab-fr'),
     tabEn: document.getElementById('tab-en'),
     btnRefreshPreview: document.getElementById('btn-refresh-preview'),
-    btnPreviewFr: document.getElementById('btn-preview-fr'),
-    btnPreviewEn: document.getElementById('btn-preview-en'),
     btnDownloadActive: document.getElementById('btn-download-active'),
     btnDownloadZip: document.getElementById('btn-download-zip'),
     lblDownloadLang: document.getElementById('lbl-download-lang'),
@@ -714,28 +712,6 @@
         }
       });
 
-      if (DOM.btnPreviewFr) {
-        DOM.btnPreviewFr.addEventListener('click', () => {
-          State.previewLang = 'fr';
-          DOM.btnPreviewFr.className = 'px-2.5 py-1 rounded bg-white dark:bg-slate-800 text-burgeap-blue dark:text-burgeap-green shadow-sm flex items-center gap-1.5 font-bold';
-          DOM.btnPreviewEn.className = 'px-2.5 py-1 rounded text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5 font-bold';
-          if (DOM.lblDownloadLang) DOM.lblDownloadLang.textContent = 'FR';
-          EditorController.saveCurrentForm();
-          this.refresh();
-        });
-      }
-
-      if (DOM.btnPreviewEn) {
-        DOM.btnPreviewEn.addEventListener('click', () => {
-          State.previewLang = 'en';
-          DOM.btnPreviewEn.className = 'px-2.5 py-1 rounded bg-white dark:bg-slate-800 text-burgeap-blue dark:text-burgeap-green shadow-sm flex items-center gap-1.5 font-bold';
-          DOM.btnPreviewFr.className = 'px-2.5 py-1 rounded text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5 font-bold';
-          if (DOM.lblDownloadLang) DOM.lblDownloadLang.textContent = 'EN';
-          EditorController.saveCurrentForm();
-          this.refresh();
-        });
-      }
-
       if (DOM.btnDownloadActive) {
         DOM.btnDownloadActive.addEventListener('click', async () => {
           EditorController.saveCurrentForm();
@@ -776,18 +752,25 @@
     switchLang(lang, shouldSave = true) {
       if (shouldSave) this.saveCurrentForm();
       State.currentLang = lang;
+      State.previewLang = lang;
 
       if (lang === 'fr') {
-        DOM.tabFr.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-burgeap-blue text-white shadow-sm';
-        DOM.tabEn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-transparent text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700';
+        DOM.tabFr.className = 'px-2.5 sm:px-3 py-1 rounded-md text-xs font-bold transition flex items-center gap-1.5 bg-burgeap-blue text-white shadow-xs';
+        DOM.tabEn.className = 'px-2.5 sm:px-3 py-1 rounded-md text-xs font-bold transition flex items-center gap-1.5 bg-transparent text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white';
         document.querySelectorAll('.lang-label').forEach(el => el.textContent = 'FR');
       } else {
-        DOM.tabEn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-burgeap-blue text-white shadow-sm';
-        DOM.tabFr.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-transparent text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700';
+        DOM.tabEn.className = 'px-2.5 sm:px-3 py-1 rounded-md text-xs font-bold transition flex items-center gap-1.5 bg-burgeap-blue text-white shadow-xs';
+        DOM.tabFr.className = 'px-2.5 sm:px-3 py-1 rounded-md text-xs font-bold transition flex items-center gap-1.5 bg-transparent text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white';
         document.querySelectorAll('.lang-label').forEach(el => el.textContent = 'EN');
       }
 
+      if (DOM.lblDownloadLang) {
+        DOM.lblDownloadLang.textContent = lang.toUpperCase();
+      }
+
       this.populate();
+      PreviewController.refresh();
+      SessionController.scheduleAutoSave();
     },
 
     saveCurrentForm() {
@@ -960,6 +943,13 @@
     bindEvents() {
       if (DOM.tabFr) DOM.tabFr.addEventListener('click', () => this.switchLang('fr'));
       if (DOM.tabEn) DOM.tabEn.addEventListener('click', () => this.switchLang('en'));
+      if (DOM.btnRefreshPreview) {
+        DOM.btnRefreshPreview.addEventListener('click', () => {
+          this.saveCurrentForm();
+          PreviewController.refresh();
+          SessionController.scheduleAutoSave();
+        });
+      }
 
       if (DOM.btnPitchBold) {
         DOM.btnPitchBold.addEventListener('click', (e) => {

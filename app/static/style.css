@@ -153,3 +153,12 @@ html.dark .pdf-viewport {
 .cropper-modal {
   background-color: transparent !important;
 }
+
+/* Scrollbar Utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

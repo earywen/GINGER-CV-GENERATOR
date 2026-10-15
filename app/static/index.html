@@ -20,7 +20,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <!-- Cropper.js CSS -->
   <link rel="stylesheet" href="/static/vendor/cropper.min.css">
-  <link rel="stylesheet" href="/static/style.css?v=11">
+  <link rel="stylesheet" href="/static/style.css?v=12">
 
   <script>
     tailwind.config = {
@@ -201,38 +201,41 @@
       <!-- Left Column: Form Editor (Independently Scrollable) -->
       <div class="flex flex-col bg-white dark:bg-slate-900 rounded-xl shadow-md border border-slate-200 dark:border-slate-800 overflow-hidden h-full min-h-0">
         
-        <!-- Editor Header & Tabs with crisp vector flags -->
-        <div class="bg-slate-100 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700 px-4 py-2.5 flex items-center justify-between shrink-0">
-          <div class="flex space-x-2">
-            <button id="tab-fr" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-burgeap-blue text-white shadow-sm">
-              <svg class="w-4 h-3 rounded-xs inline-block" viewBox="0 0 640 480">
+        <!-- Editor Header with Unified Master Language Toggle (Fixed h-12) -->
+        <div class="h-12 bg-slate-100 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700 px-3 flex items-center justify-between gap-2 shrink-0">
+          <!-- Master Language Toggle (controls Form & Preview simultaneously) -->
+          <div class="bg-slate-200/80 dark:bg-slate-700/80 p-0.5 rounded-lg flex text-xs font-bold shrink-0">
+            <button id="tab-fr" type="button" class="px-2.5 sm:px-3 py-1 rounded-md text-xs font-bold transition flex items-center gap-1.5 bg-burgeap-blue text-white shadow-xs">
+              <svg class="w-3.5 h-2.5 rounded-xs inline-block shrink-0" viewBox="0 0 640 480">
                 <g fill-rule="evenodd" stroke-width="1pt">
                   <path fill="#fff" d="M0 0h640v480H0z"/>
                   <path fill="#00267f" d="M0 0h213.3v480H0z"/>
                   <path fill="#f31830" d="M426.7 0H640v480H426.7z"/>
                 </g>
               </svg>
-              Français
+              <span>Français</span>
             </button>
-            <button id="tab-en" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 bg-transparent text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">
-              <svg class="w-4 h-3 rounded-xs inline-block" viewBox="0 0 640 480">
+            <button id="tab-en" type="button" class="px-2.5 sm:px-3 py-1 rounded-md text-xs font-bold transition flex items-center gap-1.5 bg-transparent text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
+              <svg class="w-3.5 h-2.5 rounded-xs inline-block shrink-0" viewBox="0 0 640 480">
                 <path fill="#012169" d="M0 0h640v480H0z"/>
                 <path fill="#FFF" d="m75 0 245 180L565 0h75v60L435 240l205 180v60h-75L320 300 75 480H0v-60l205-180L0 60V0h75z"/>
                 <path fill="#C8102E" d="m424 288 216 158v34h-46L378 300l46-12zM640 0v10L446 154l-38-26L580 0h60zM0 480v-10l194-144 38 26L60 480H0zM0 0l216 158-46 12L0 34V0z"/>
                 <path fill="#FFF" d="M240 0v480h160V0H240zM0 160v160h640V160H0z"/>
                 <path fill="#C8102E" d="M266 0v480h108V0H266zM0 186v108h640V186H0z"/>
               </svg>
-              English
+              <span>English</span>
             </button>
           </div>
-          <div class="flex items-center space-x-2">
+
+          <div class="flex items-center space-x-2 shrink-0">
             <!-- Auto-save Sync Indicator -->
-            <div id="save-status-indicator" class="text-[11px] font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-200/50 dark:bg-slate-700/50 select-none transition">
+            <div id="save-status-indicator" class="text-[11px] font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1.5 px-2 py-1 rounded-md bg-slate-200/50 dark:bg-slate-700/50 select-none transition">
               <i class="fa-solid fa-cloud-arrow-up text-burgeap-green text-[11px]"></i>
-              <span id="save-status-text">Sauvegardé</span>
+              <span id="save-status-text" class="hidden sm:inline">Sauvegardé</span>
             </div>
-            <button id="btn-refresh-preview" class="text-xs bg-burgeap-green/20 hover:bg-burgeap-green/30 text-burgeap-dark dark:text-burgeap-green font-bold px-3 py-1 rounded-lg transition flex items-center gap-1.5">
-              <i class="fa-solid fa-arrows-rotate"></i> Actualiser
+            <button id="btn-refresh-preview" type="button" title="Actualiser le rendu" class="text-xs bg-burgeap-green/20 hover:bg-burgeap-green/30 text-burgeap-dark dark:text-burgeap-green font-bold px-2.5 py-1 rounded-lg transition flex items-center gap-1.5 cursor-pointer">
+              <i class="fa-solid fa-arrows-rotate text-[11px]"></i>
+              <span class="hidden sm:inline">Actualiser</span>
             </button>
           </div>
         </div>
@@ -359,37 +362,11 @@
       <!-- Right Column: Live PDF Viewer & Interactive Canvas (Canva / Figma style) -->
       <div id="right-column-container" class="flex flex-col bg-white dark:bg-slate-900 rounded-xl shadow-md border border-slate-200 dark:border-slate-800 overflow-hidden h-full min-h-0">
         
-        <!-- Viewer Top Toolbar -->
-        <div class="bg-slate-100 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700 px-3 py-2 flex flex-wrap items-center justify-between gap-2 shrink-0">
+        <!-- Viewer Top Toolbar (Single line, strictly h-12, perfectly aligned with left header) -->
+        <div class="h-12 bg-slate-100 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700 px-3 flex items-center justify-between gap-1.5 sm:gap-2 shrink-0 flex-nowrap overflow-x-auto no-scrollbar">
           
-          <!-- Left: Lang + Tool Mode + Page Jump -->
-          <div class="flex items-center space-x-2">
-            <!-- Language Toggle -->
-            <div class="bg-slate-200 dark:bg-slate-700/80 p-0.5 rounded-lg flex text-xs font-bold">
-              <button id="btn-preview-fr" class="px-2.5 py-1 rounded bg-white dark:bg-slate-800 text-burgeap-blue dark:text-burgeap-green shadow-sm flex items-center gap-1.5">
-                <svg class="w-3.5 h-2.5 rounded-xs inline-block" viewBox="0 0 640 480">
-                  <g fill-rule="evenodd" stroke-width="1pt">
-                    <path fill="#fff" d="M0 0h640v480H0z"/>
-                    <path fill="#00267f" d="M0 0h213.3v480H0z"/>
-                    <path fill="#f31830" d="M426.7 0H640v480H426.7z"/>
-                  </g>
-                </svg>
-                FR
-              </button>
-              <button id="btn-preview-en" class="px-2.5 py-1 rounded text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5">
-                <svg class="w-3.5 h-2.5 rounded-xs inline-block" viewBox="0 0 640 480">
-                  <path fill="#012169" d="M0 0h640v480H0z"/>
-                  <path fill="#FFF" d="m75 0 245 180L565 0h75v60L435 240l205 180v60h-75L320 300 75 480H0v-60l205-180L0 60V0h75z"/>
-                  <path fill="#C8102E" d="m424 288 216 158v34h-46L378 300l46-12zM640 0v10L446 154l-38-26L580 0h60zM0 480v-10l194-144 38 26L60 480H0zM0 0l216 158-46 12L0 34V0z"/>
-                  <path fill="#FFF" d="M240 0v480h160V0H240zM0 160v160h640V160H0z"/>
-                  <path fill="#C8102E" d="M266 0v480h108V0H266zM0 186v108h640V186H0z"/>
-                </svg>
-                EN
-              </button>
-            </div>
-
-            <div class="h-4 border-l border-slate-300 dark:border-slate-700"></div>
-
+          <!-- Left: Canvas Tools & Page Jump -->
+          <div class="flex items-center space-x-1.5 shrink-0">
             <!-- Canvas Tool Toggle (Hand vs Selection) -->
             <div class="bg-slate-200/80 dark:bg-slate-700/80 p-0.5 rounded-lg flex text-xs font-semibold">
               <button id="btn-tool-hand" type="button" title="Outil Main (H) - Déplacer librement" class="px-2 py-1 rounded bg-white dark:bg-slate-800 text-burgeap-blue dark:text-burgeap-green shadow-xs transition flex items-center gap-1">
@@ -411,39 +388,41 @@
             </div>
           </div>
 
-          <!-- Center: Ergonomic Zoom Presets & Steppers -->
-          <div class="flex items-center space-x-1 bg-slate-200/80 dark:bg-slate-700/80 border border-slate-300/80 dark:border-slate-600 rounded-lg p-0.5 text-xs text-slate-700 dark:text-slate-200">
-            <button id="btn-zoom-out" type="button" title="Zoom arrière (-)" class="px-2 py-0.5 rounded hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold transition">
-              <i class="fa-solid fa-minus text-[11px]"></i>
+          <!-- Center: Ergonomic Zoom Steppers & Presets -->
+          <div class="flex items-center space-x-1 bg-slate-200/80 dark:bg-slate-700/80 border border-slate-300/80 dark:border-slate-600 rounded-lg p-0.5 text-xs text-slate-700 dark:text-slate-200 shrink-0">
+            <button id="btn-zoom-out" type="button" title="Zoom arrière (-)" class="px-1.5 py-0.5 rounded hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold transition">
+              <i class="fa-solid fa-minus text-[10px]"></i>
             </button>
             <button id="btn-zoom-reset" type="button" title="Réinitialiser à 100% (0)" class="px-1.5 font-mono text-xs font-bold text-slate-800 dark:text-slate-100 hover:bg-white dark:hover:bg-slate-800 rounded select-none transition">
               <span id="lbl-zoom-val">70%</span>
             </button>
-            <button id="btn-zoom-in" type="button" title="Zoom avant (+)" class="px-2 py-0.5 rounded hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold transition">
-              <i class="fa-solid fa-plus text-[11px]"></i>
+            <button id="btn-zoom-in" type="button" title="Zoom avant (+)" class="px-1.5 py-0.5 rounded hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold transition">
+              <i class="fa-solid fa-plus text-[10px]"></i>
             </button>
             <div class="h-3.5 border-l border-slate-300 dark:border-slate-600 mx-0.5"></div>
             <button id="btn-zoom-width" type="button" title="Ajuster à la largeur (W)" class="px-2 py-0.5 rounded hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold transition flex items-center gap-1">
-              <i class="fa-solid fa-arrows-left-right text-[11px]"></i> Largeur
+              <i class="fa-solid fa-arrows-left-right text-[10px]"></i>
+              <span class="hidden xl:inline">Largeur</span>
             </button>
             <button id="btn-zoom-fit" type="button" title="Vue d'ensemble page entière (A)" class="px-2 py-0.5 rounded hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold transition flex items-center gap-1">
-              <i class="fa-solid fa-expand text-[11px]"></i> Page
+              <i class="fa-solid fa-expand text-[10px]"></i>
+              <span class="hidden xl:inline">Page</span>
             </button>
           </div>
 
           <!-- Right: Fullscreen, Tab & Downloads -->
-          <div class="flex items-center space-x-1.5">
+          <div class="flex items-center space-x-1.5 shrink-0">
             <button id="btn-fullscreen" type="button" title="Basculer Plein Écran (F)" class="p-1.5 rounded-lg bg-slate-200/80 dark:bg-slate-700/80 hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold transition">
               <i class="fa-solid fa-maximize text-xs"></i>
             </button>
             <button id="btn-open-tab" type="button" title="Ouvrir le PDF dans un nouvel onglet" class="p-1.5 rounded-lg bg-slate-200/80 dark:bg-slate-700/80 hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold transition">
               <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
             </button>
-            <button id="btn-download-active" class="bg-burgeap-blue hover:bg-burgeap-dark dark:bg-burgeap-blue dark:hover:bg-slate-800 text-white text-xs font-bold px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 shadow-sm">
+            <button id="btn-download-active" title="Télécharger le PDF officiel" class="bg-burgeap-blue hover:bg-burgeap-dark dark:bg-burgeap-blue dark:hover:bg-slate-800 text-white text-xs font-bold px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 shadow-xs">
               <i class="fa-solid fa-file-arrow-down"></i> <span id="lbl-download-lang">FR</span>
             </button>
-            <button id="btn-download-zip" class="bg-burgeap-green hover:bg-burgeap-greenDark text-burgeap-dark text-xs font-black px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow-sm">
-              <i class="fa-solid fa-file-zipper"></i> Pack ZIP
+            <button id="btn-download-zip" title="Télécharger le pack complet (FR + EN)" class="bg-burgeap-green hover:bg-burgeap-greenDark text-burgeap-dark text-xs font-black px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 shadow-xs">
+              <i class="fa-solid fa-file-zipper"></i> <span class="hidden sm:inline">Pack</span> ZIP
             </button>
           </div>
         </div>
@@ -560,7 +539,7 @@
   </div>
 
   <script src="/static/vendor/cropper.min.js"></script>
-  <script src="/static/app.js?v=11"></script>
+  <script src="/static/app.js?v=12"></script>
 </body>
 
 </html>
