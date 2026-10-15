@@ -1,0 +1,77 @@
+/* Styles spécifiques pour le générateur de CV Ginger Burgeap */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.ref-card {
+  transition: all 0.2s ease-in-out;
+}
+
+.ref-card:hover {
+  border-color: #13375f;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: #13375f !important;
+}
+
+/* Zoom Container Styling */
+.pdf-viewport {
+  background: radial-gradient(circle, #334155 0%, #1e293b 100%);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow: auto;
+  position: relative;
+}
+
+#pdf-zoom-wrapper {
+  transform-origin: top center;
+  transition: transform 0.15s ease-out;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  background: #ffffff;
+}
+
+/* Ensure smooth sticky scroll in dual-pane */
+@media (min-width: 1024px) {
+  .app-dual-pane {
+    height: calc(100vh - 6rem);
+  }
+}
+
+/* Circular Cropper Styling */
+.cropper-view-box,
+.cropper-face {
+  border-radius: 50% !important;
+}
+
+.cropper-view-box {
+  outline: 3px solid #ffffff !important;
+  box-shadow: 0 0 0 2000px rgba(15, 23, 42, 0.8) !important;
+}
+
+.cropper-dashed,
+.cropper-point,
+.cropper-line {
+  display: none !important;
+}
+
+.cropper-modal {
+  background-color: transparent !important;
+}

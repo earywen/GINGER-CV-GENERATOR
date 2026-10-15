@@ -1,0 +1,21 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Data & sample documents
+CV GINGER BURGEAP 2026/
+
+# Environments
+.env
+.venv/
+venv*/
+
+# Logs
+*.log
+
+# OS & Editor files
+.DS_Store
+.idea/
+.vscode/
+*.swp
