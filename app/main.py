@@ -38,7 +38,15 @@ app.mount("/static", StaticFiles(directory=str(settings.STATIC_DIR)), name="stat
 async def serve_index():
     index_file = settings.STATIC_DIR / "index.html"
     with open(index_file, "r", encoding="utf-8") as f:
-        return f.read()
+        content = f.read()
+    return HTMLResponse(
+        content=content,
+        headers={
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0"
+        }
+    )
 
 @app.get("/api/health")
 async def health_check():

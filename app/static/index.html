@@ -24,7 +24,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <!-- Cropper.js CSS -->
   <link rel="stylesheet" href="/static/vendor/cropper.min.css">
-  <link rel="stylesheet" href="/static/style.css?v=17">
+  <link rel="stylesheet" href="/static/style.css?v=20">
 
   <script>
     tailwind.config = {
@@ -71,9 +71,9 @@
         </button>
 
         <!-- About / Help Modal Button -->
-        <button id="btn-about" type="button" aria-label="À propos de l'application et guide d'utilisation" title="À propos & Guide d'utilisation" class="h-8 px-2.5 rounded-lg bg-white/10 hover:bg-white/20 dark:bg-slate-800 dark:hover:bg-slate-700 text-white flex items-center gap-1.5 transition text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-burgeap-green cursor-pointer">
-          <i class="fa-solid fa-circle-question text-burgeap-green text-sm"></i>
-          <span class="hidden sm:inline">À propos</span>
+        <button id="btn-about" type="button" onclick="if(window.__App &amp;&amp; window.__App.AboutController){ window.__App.AboutController.open(); } else { document.getElementById('modal-about').classList.remove('hidden'); }" aria-label="À propos de l'application et guide d'utilisation" title="À propos & Guide d'utilisation" class="h-8 px-2.5 rounded-lg bg-white/10 hover:bg-white/20 dark:bg-slate-800 dark:hover:bg-slate-700 text-white flex items-center gap-1.5 transition text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-burgeap-green cursor-pointer">
+          <i class="fa-solid fa-circle-question text-burgeap-green text-sm pointer-events-none"></i>
+          <span class="hidden sm:inline pointer-events-none">À propos</span>
         </button>
 
         <!-- Dark / Light Theme Toggle -->
@@ -477,7 +477,7 @@
   </main>
 
   <!-- Modal À Propos & Aide -->
-  <div id="modal-about" class="fixed inset-0 z-[110] bg-slate-950/75 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-5" role="dialog" aria-modal="true" aria-labelledby="modal-about-title">
+  <div id="modal-about" onclick="if(event.target===this){ if(window.__App &amp;&amp; window.__App.AboutController){ window.__App.AboutController.close(); } else { this.classList.add('hidden'); } }" class="fixed inset-0 z-[110] bg-slate-950/75 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-5" role="dialog" aria-modal="true" aria-labelledby="modal-about-title">
     <div id="modal-about-content" class="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col max-h-[90vh] overflow-hidden animate-modal-pop">
       
       <!-- Modal Header -->
@@ -494,8 +494,8 @@
             <p class="text-xs text-slate-300 mt-0.5">Outil officiel de standardisation & d'ingénierie des CV d'experts</p>
           </div>
         </div>
-        <button id="btn-about-close" type="button" aria-label="Fermer la fenêtre" class="w-8 h-8 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition flex items-center justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-burgeap-green">
-          <i class="fa-solid fa-xmark text-lg"></i>
+        <button id="btn-about-close" type="button" onclick="if(window.__App &amp;&amp; window.__App.AboutController){ window.__App.AboutController.close(); } else { document.getElementById('modal-about').classList.add('hidden'); }" aria-label="Fermer la fenêtre" class="w-8 h-8 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition flex items-center justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-burgeap-green">
+          <i class="fa-solid fa-xmark text-lg pointer-events-none"></i>
         </button>
       </div>
 
@@ -628,9 +628,9 @@
               <div>
                 <div class="flex items-center gap-2">
                   <h5 class="font-bold text-slate-900 dark:text-slate-100 text-sm">Laurent BRIGAUD</h5>
-                  <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-burgeap-blue text-white dark:bg-burgeap-green dark:text-slate-950">Concepteur & Développeur</span>
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-burgeap-blue text-white dark:bg-burgeap-green dark:text-slate-950">Chef de projets SSP</span>
                 </div>
-                <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Ginger Burgeap · Direction de l'Ingénierie & Transformation Numérique</p>
+                <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Ginger Burgeap · Agence de Rouen</p>
               </div>
             </div>
           </div>
@@ -720,7 +720,7 @@
           <span class="w-2 h-2 rounded-full bg-burgeap-green"></span>
           <span>Ginger Burgeap · Ingénierie & Conseil</span>
         </div>
-        <button id="btn-about-footer-close" type="button" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-burgeap-blue hover:bg-burgeap-dark dark:bg-slate-800 dark:hover:bg-slate-700 text-white transition focus:outline-none focus:ring-2 focus:ring-burgeap-green cursor-pointer">
+        <button id="btn-about-footer-close" type="button" onclick="if(window.__App &amp;&amp; window.__App.AboutController){ window.__App.AboutController.close(); } else { document.getElementById('modal-about').classList.add('hidden'); }" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-burgeap-blue hover:bg-burgeap-dark dark:bg-slate-800 dark:hover:bg-slate-700 text-white transition focus:outline-none focus:ring-2 focus:ring-burgeap-green cursor-pointer">
           Fermer
         </button>
       </div>
@@ -804,7 +804,7 @@
   </div>
 
   <script src="/static/vendor/cropper.min.js"></script>
-  <script src="/static/app.js?v=17"></script>
+  <script src="/static/app.js?v=20"></script>
 </body>
 
 </html>
