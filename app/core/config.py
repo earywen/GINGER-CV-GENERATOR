@@ -45,6 +45,14 @@ class Settings(BaseSettings):
     # Default corporate values
     DEFAULT_AGENCY: str = "RÉGION NORD-OUEST"
 
+    # Directories & paths
+    BASE_DIR: Path = BASE_DIR
+    APP_DIR: Path = APP_DIR
+    STATIC_DIR: Path = STATIC_DIR
+    TEMPLATE_DIR: Path = TEMPLATE_DIR
+    ASSETS_DIR: Path = ASSETS_DIR
+    LOGO_PATH: Path = LOGO_PATH
+
     # Job cleanup
     JOB_EXPIRATION_SECONDS: int = 1800
     JOB_MAX_STORED: int = 200

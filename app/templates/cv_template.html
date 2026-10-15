@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="__LANG__">
+<html lang="{{ lang }}">
 <head>
 <meta charset="UTF-8">
-<title>CV __NAME__ - Ginger Burgeap</title>
+<title>CV {{ name }} - Ginger Burgeap</title>
 <style>
   @page { size: 210mm 297mm; margin: 0; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -10,7 +10,7 @@
     margin: 0; padding: 0;
     font-family: "Segoe UI", "Segoe", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
     color: #13375f; background: #334155;
-    font-size: __BASE_FONT__pt; line-height: __LINE_HEIGHT__;
+    font-size: {{ base_font }}pt; line-height: {{ line_height }};
     -webkit-print-color-adjust: exact;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -79,7 +79,7 @@
   }
   .identity-block .job-title { font-size: 7.8pt; font-style: italic; color: #ffffff; margin-top: 2.5px; line-height: 1.2; }
   .identity-block .experience-tag { display: inline-block; color: #ffffff; font-size: 7.4pt; font-weight: 600; margin-top: 3px; }
-  .side-sections-wrapper { display: flex; flex-direction: column; gap: __GAP_SIZE__px; z-index: 2; }
+  .side-sections-wrapper { display: flex; flex-direction: column; gap: {{ gap_size }}px; z-index: 2; }
   .side-section-title {
     font-size: 7.4pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
     color: #ffffff; border-bottom: 1px solid rgba(255, 255, 255, 0.35);
@@ -87,7 +87,7 @@
   }
   .side-list { list-style: none; }
   .side-list li {
-    position: relative; padding-left: 7.5px; font-size: __SIDE_FONT__pt; line-height: 1.22;
+    position: relative; padding-left: 7.5px; font-size: {{ side_font }}pt; line-height: 1.22;
     color: #f8fafc; margin-bottom: 2.5px; text-align: left;
   }
   .side-list li:last-child { margin-bottom: 0; }
@@ -96,7 +96,7 @@
   .right-column {
     width: 137.9mm; height: 297mm; background: #ffffff;
     padding: 6.5mm 8.5mm 14mm 7mm; display: flex; flex-direction: column;
-    gap: __GAP_SIZE__px; box-sizing: border-box;
+    gap: {{ gap_size }}px; box-sizing: border-box;
   }
   .right-header {
     display: flex; justify-content: space-between; align-items: center;
@@ -113,7 +113,7 @@
   }
   .qualif-list { list-style: none; }
   .qualif-list li {
-    position: relative; padding-left: 8.5px; font-size: __BODY_FONT__pt; line-height: 1.22;
+    position: relative; padding-left: 8.5px; font-size: {{ body_font }}pt; line-height: 1.22;
     color: #334155; margin-bottom: 2.5px; text-align: justify; text-justify: inter-word;
   }
   .qualif-list li:last-child { margin-bottom: 0; }
@@ -141,57 +141,138 @@
 <div class="cv-page" id="cv-page-root">
   <div class="left-column">
     <div class="photo-container">
-      __PHOTO_HTML__
+      {% if photo_b64 %}
+        <div class="photo-circle"><img src="data:image/jpeg;base64,{{ photo_b64 }}" alt="{{ name }}" /></div>
+      {% else %}
+        <div class="photo-circle initials-avatar"><span>{{ initials }}</span></div>
+      {% endif %}
     </div>
     <div class="identity-block">
-      <h1>__NAME__</h1>
-      <div class="job-title">__ROLE__</div>
-      <div class="experience-tag">__EXP__</div>
+      <h1>{{ name }}</h1>
+      <div class="job-title">{{ role }}</div>
+      <div class="experience-tag">{{ exp }}</div>
     </div>
     <div class="side-sections-wrapper">
       <div>
-        <div class="side-section-title">__T_FORMATIONS__</div>
-        <ul class="side-list">__FORMATIONS_HTML__</ul>
+        <div class="side-section-title">{{ t_formations }}</div>
+        <ul class="side-list">
+          {% for f in formations %}
+            <li>{{ f|safe }}</li>
+          {% endfor %}
+        </ul>
       </div>
       <div>
-        <div class="side-section-title">__T_COMPETENCES__</div>
-        <ul class="side-list">__COMPETENCES_HTML__</ul>
+        <div class="side-section-title">{{ t_competences }}</div>
+        <ul class="side-list">
+          {% for c in competences %}
+            <li>{{ c|safe }}</li>
+          {% endfor %}
+        </ul>
       </div>
       <div>
-        <div class="side-section-title">__T_EXP_PRO__</div>
-        <ul class="side-list">__EXP_PRO_HTML__</ul>
+        <div class="side-section-title">{{ t_exp_pro }}</div>
+        <ul class="side-list">
+          {% for e in exp_pros %}
+            <li>{{ e|safe }}</li>
+          {% endfor %}
+        </ul>
       </div>
       <div>
-        <div class="side-section-title">__T_LANG__</div>
-        <ul class="side-list">__LANGS_HTML__</ul>
+        <div class="side-section-title">{{ t_lang }}</div>
+        <ul class="side-list">
+          {% for l in langs %}
+            <li>{{ l|safe }}</li>
+          {% endfor %}
+        </ul>
       </div>
     </div>
-    __GINGER_CURVE_SVG__
+    {{ ginger_curve_svg|safe }}
   </div>
   <div class="right-column">
     <div class="right-header">
-      <div class="agency-text">__AGENCY__</div>
-      <img class="logo-img" src="data:image/png;base64,__LOGO_B64__" alt="GINGER BURGEAP" />
+      <div class="agency-text">{{ agency }}</div>
+      <img class="logo-img" src="data:image/png;base64,{{ logo_b64 }}" alt="GINGER BURGEAP" />
     </div>
     <div class="profil-box">
-      <div class="profil-box-title">__T_PROFIL__</div>
-      <div class="profil-box-text">__PITCH__</div>
+      <div class="profil-box-title">{{ t_profil }}</div>
+      <div class="profil-box-text">{{ pitch|safe }}</div>
     </div>
     <div>
-      <div class="main-section-title">__T_QUALIF__</div>
-      <ul class="qualif-list">__QUALIFS_HTML__</ul>
+      <div class="main-section-title">{{ t_qualif }}</div>
+      <ul class="qualif-list">
+        {% for q in qualifs %}
+          <li>{{ q|safe }}</li>
+        {% endfor %}
+      </ul>
     </div>
     <div>
-      <div class="main-section-title">__T_REFS__</div>
-      __REFS_HTML__
+      <div class="main-section-title">{{ t_refs }}</div>
+      {% for r in refs_p1 %}
+        <div class="ref-item">
+          <div>
+            <span class="ref-header-line">{{ r.title }}</span>
+            <span class="ref-badge {% if loop.index0 % 2 == 1 %}green{% endif %}">{{ r.tag }}</span>
+          </div>
+          <div class="ref-desc-text">{{ r.desc }}</div>
+        </div>
+      {% endfor %}
     </div>
   </div>
   <div class="page-footer">
-    <span>__FOOTER_TEXT__</span>
-    <span class="pagination-text">__PAGE_1_PAGINATION__</span>
+    <span>{{ footer_text }}</span>
+    <span class="pagination-text">{{ page_1_pagination }}</span>
   </div>
 </div>
 
-__PAGE_2_HTML__
+{% if has_p2 %}
+<div class="cv-page cv-page-2" id="cv-page-2">
+  <div class="left-column left-column-p2">
+    <div class="identity-block" style="margin-top: 5mm;">
+      <h1>{{ name }}</h1>
+      <div class="job-title">{{ role }}</div>
+      <div class="experience-tag">{{ exp }}</div>
+    </div>
+    <div class="side-sections-wrapper" style="margin-top: 8px;">
+      <div>
+        <div class="side-section-title">{{ t_suite_sidebar }}</div>
+        <p style="font-size: {{ "%.2f"|format(6.8 * font_scale) }}pt; line-height: 1.35; color: #f8fafc; margin-bottom: 8px;">
+          {{ desc_suite_sidebar }}
+        </p>
+      </div>
+      <div>
+        <div class="side-section-title">{{ t_competences }}</div>
+        <ul class="side-list">
+          {% for c in competences %}
+            <li>{{ c|safe }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    {{ ginger_curve_svg|safe }}
+  </div>
+  <div class="right-column">
+    <div class="right-header">
+      <div class="agency-text">{{ agency }} • {{ t_projets_missions }}</div>
+      <img class="logo-img" src="data:image/png;base64,{{ logo_b64 }}" alt="GINGER BURGEAP" />
+    </div>
+    <div>
+      <div class="main-section-title">{{ t_refs_p2 }}</div>
+      {% for r in refs_p2 %}
+        <div class="ref-item">
+          <div>
+            <span class="ref-header-line">{{ r.title }}</span>
+            <span class="ref-badge {% if (loop.index0 + p1_count) % 2 == 1 %}green{% endif %}">{{ r.tag }}</span>
+          </div>
+          <div class="ref-desc-text">{{ r.desc }}</div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="page-footer">
+    <span>{{ footer_text }}</span>
+    <span class="pagination-text">Page 2 / 2</span>
+  </div>
+</div>
+{% endif %}
 </body>
 </html>
