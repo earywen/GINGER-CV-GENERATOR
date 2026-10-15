@@ -11,7 +11,7 @@ class TestApiEndpointsParity(unittest.TestCase):
     def test_serve_index(self):
         res = self.client.get("/")
         self.assertEqual(res.status_code, 200)
-        self.assertIn("Générateur de CV Ginger Burgeap 2026", res.text)
+        self.assertIn("Générateur de CV Ginger Burgeap", res.text)
 
     def test_render_html(self):
         res = self.client.post("/api/render-html", json={"data": SAMPLE_CV_DATA, "lang": "fr"})

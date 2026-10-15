@@ -572,9 +572,15 @@
       }
     },
 
-    async refresh() {
+    _renderSeq: 0,
+
+    async refresh(silent = false) {
       if (!State.cvData) return;
-      if (DOM.pdfLoadingSpinner) DOM.pdfLoadingSpinner.classList.remove('hidden');
+      const seq = ++this._renderSeq;
+      if (!silent && DOM.pdfLoadingSpinner) DOM.pdfLoadingSpinner.classList.remove('hidden');
+
+      const refreshIcon = DOM.btnRefreshPreview ? DOM.btnRefreshPreview.querySelector('.fa-arrows-rotate') : null;
+      if (refreshIcon) refreshIcon.classList.add('fa-spin');
 
       if (!this.shadowRoot && DOM.pdfShadowHost) {
         this.shadowRoot = DOM.pdfShadowHost.attachShadow({ mode: 'open' });
@@ -590,6 +596,8 @@
         if (!res.ok) throw new Error('Erreur lors du rendu HTML.');
 
         const html = await res.text();
+        if (seq !== this._renderSeq) return; // Discard outdated response
+
         if (this.shadowRoot) {
           this.shadowRoot.innerHTML = html;
           const pages = this.shadowRoot.querySelectorAll('.cv-page');
@@ -620,7 +628,10 @@
       } catch (err) {
         console.error('Preview render error:', err);
       } finally {
-        if (DOM.pdfLoadingSpinner) DOM.pdfLoadingSpinner.classList.add('hidden');
+        if (seq === this._renderSeq) {
+          if (!silent && DOM.pdfLoadingSpinner) DOM.pdfLoadingSpinner.classList.add('hidden');
+          if (refreshIcon) refreshIcon.classList.remove('fa-spin');
+        }
       }
     },
 
@@ -828,6 +839,18 @@
   // 6. EDITOR CONTROLLER
   // =========================================================================
   const EditorController = {
+    _livePreviewTimer: null,
+
+    scheduleLivePreview(immediate = false) {
+      clearTimeout(this._livePreviewTimer);
+      const delay = immediate ? 0 : 300;
+      this._livePreviewTimer = setTimeout(() => {
+        this.saveCurrentForm();
+        PreviewController.refresh(true); // silent = true: instant update, no modal spinner overlay
+        SessionController.scheduleAutoSave();
+      }, delay);
+    },
+
     switchLang(lang, shouldSave = true) {
       if (shouldSave) this.saveCurrentForm();
       State.currentLang = lang;
@@ -925,9 +948,11 @@
         row.querySelector('button').addEventListener('click', () => {
           items.splice(idx, 1);
           this.renderDynamicList(containerId, items);
+          this.scheduleLivePreview(true);
         });
         editableDiv.addEventListener('input', () => {
           items[idx] = Utils.cleanHtml(editableDiv.innerHTML);
+          this.scheduleLivePreview(false);
         });
         container.appendChild(row);
       });
@@ -939,6 +964,7 @@
       btnAdd.addEventListener('click', () => {
         items.push('Nouvel élément');
         this.renderDynamicList(containerId, items);
+        this.scheduleLivePreview(true);
       });
       container.appendChild(btnAdd);
     },
@@ -968,14 +994,19 @@
           e.preventDefault();
           editableQ.focus();
           Utils.formatText('bold');
+          qualifs[idx] = Utils.cleanHtml(editableQ.innerHTML);
+          this.scheduleLivePreview(true);
         });
         item.querySelector('.btn-q-italic').addEventListener('click', (e) => {
           e.preventDefault();
           editableQ.focus();
           Utils.formatText('italic');
+          qualifs[idx] = Utils.cleanHtml(editableQ.innerHTML);
+          this.scheduleLivePreview(true);
         });
         editableQ.addEventListener('input', () => {
           qualifs[idx] = Utils.cleanHtml(editableQ.innerHTML);
+          this.scheduleLivePreview(false);
         });
 
         container.appendChild(item);
@@ -1011,9 +1042,18 @@
           </div>
         `;
 
-        item.querySelector('.inp-ref-title').addEventListener('input', (e) => r.title = e.target.value);
-        item.querySelector('.inp-ref-tag').addEventListener('input', (e) => r.tag = e.target.value);
-        item.querySelector('.inp-ref-desc').addEventListener('input', (e) => r.desc = e.target.value);
+        item.querySelector('.inp-ref-title').addEventListener('input', (e) => {
+          r.title = e.target.value;
+          this.scheduleLivePreview(false);
+        });
+        item.querySelector('.inp-ref-tag').addEventListener('input', (e) => {
+          r.tag = e.target.value;
+          this.scheduleLivePreview(false);
+        });
+        item.querySelector('.inp-ref-desc').addEventListener('input', (e) => {
+          r.desc = e.target.value;
+          this.scheduleLivePreview(false);
+        });
 
         container.appendChild(item);
       });
@@ -1035,6 +1075,7 @@
           e.preventDefault();
           DOM.inpPitch.focus();
           Utils.formatText('bold');
+          this.scheduleLivePreview(true);
         });
       }
       if (DOM.btnPitchItalic) {
@@ -1042,6 +1083,7 @@
           e.preventDefault();
           DOM.inpPitch.focus();
           Utils.formatText('italic');
+          this.scheduleLivePreview(true);
         });
       }
       if (DOM.btnPitchClear) {
@@ -1049,6 +1091,7 @@
           e.preventDefault();
           DOM.inpPitch.focus();
           Utils.formatText('removeFormat');
+          this.scheduleLivePreview(true);
         });
       }
 
@@ -1058,7 +1101,7 @@
             CropperController.open(`data:image/jpeg;base64,${State.cvData.photo_b64}`, (newB64) => {
               State.cvData.photo_b64 = newB64;
               this.updateAvatar();
-              PreviewController.refresh();
+              PreviewController.refresh(false);
             });
           } else {
             DOM.editorPhotoInput.click();
@@ -1079,17 +1122,18 @@
                 if (!State.cvData) State.cvData = {};
                 State.cvData.photo_b64 = newB64;
                 this.updateAvatar();
-                PreviewController.refresh();
+                PreviewController.refresh(false);
               });
             }).catch((err) => alert('Erreur traitement image : ' + err.message));
           }
         });
       }
 
-      // Real-time Auto-Save Trigger across all form inputs and contenteditable regions
+      // Real-time Auto-Save & Reactive Live Preview across all form inputs and contenteditable regions
       if (DOM.viewEditor) {
         DOM.viewEditor.addEventListener('input', () => {
           EditorController.saveCurrentForm();
+          EditorController.scheduleLivePreview(false);
           SessionController.debouncedSave();
         });
       }
