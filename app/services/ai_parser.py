@@ -3,68 +3,26 @@ import json
 import asyncio
 import tempfile
 import os
+import re
+from typing import Dict, Any
 
-import shutil
+from app.core import settings, get_logger
+from app.models.cv import get_cv_extraction_json_schema
 
-CV_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "name": {"type": "string"},
-        "trigram": {"type": "string"},
-        "initials": {"type": "string"},
-        "role_fr": {"type": "string"},
-        "role_en": {"type": "string"},
-        "exp_fr": {"type": "string"},
-        "exp_en": {"type": "string"},
-        "agency_fr": {"type": "string"},
-        "agency_en": {"type": "string"},
-        "formations_fr": {"type": "array", "items": {"type": "string"}},
-        "formations_en": {"type": "array", "items": {"type": "string"}},
-        "competences_fr": {"type": "array", "items": {"type": "string"}},
-        "competences_en": {"type": "array", "items": {"type": "string"}},
-        "exp_pros_fr": {"type": "array", "items": {"type": "string"}},
-        "exp_pros_en": {"type": "array", "items": {"type": "string"}},
-        "langs_fr": {"type": "array", "items": {"type": "string"}},
-        "langs_en": {"type": "array", "items": {"type": "string"}},
-        "pitch_fr": {"type": "string"},
-        "pitch_en": {"type": "string"},
-        "qualifs_fr": {"type": "array", "items": {"type": "string"}},
-        "qualifs_en": {"type": "array", "items": {"type": "string"}},
-        "refs_fr": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "title": {"type": "string"},
-                    "tag": {"type": "string"},
-                    "desc": {"type": "string"}
-                },
-                "required": ["title", "tag", "desc"]
-            }
-        },
-        "refs_en": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "title": {"type": "string"},
-                    "tag": {"type": "string"},
-                    "desc": {"type": "string"}
-                },
-                "required": ["title", "tag", "desc"]
-            }
-        }
-    },
-    "required": [
-        "name", "trigram", "initials", "role_fr", "role_en", "exp_fr", "exp_en",
-        "agency_fr", "agency_en", "formations_fr", "formations_en", "competences_fr",
-        "competences_en", "exp_pros_fr", "exp_pros_en", "langs_fr", "langs_en",
-        "pitch_fr", "pitch_en", "qualifs_fr", "qualifs_en", "refs_fr", "refs_en"
-    ]
-}
+logger = get_logger(__name__)
 
-async def parse_cv_with_agy(raw_text: str, default_agency: str = "RÉGION NORD-OUEST") -> dict:
-    prompt = f"""Tu es un expert RH et ingénierie chez GINGER BURGEAP.
+def _clean_json_response(raw_text: str) -> Dict[str, Any]:
+    """
+    Strips potential markdown code blocks (```json ... ```) and parses JSON.
+    """
+    text = raw_text.strip()
+    match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
+    if match:
+        text = match.group(1)
+    return json.loads(text)
+
+def _build_prompt(raw_text: str, default_agency: str) -> str:
+    return f"""Tu es un expert RH et ingénierie chez GINGER BURGEAP.
 IMPORTANT : Tu dois répondre DIRECTEMENT avec le JSON structuré sans utiliser d'outils, sans chercher de fichiers sur le disque et sans exécuter de commande shell. Toutes les informations nécessaires sont déjà fournies ci-dessous.
 
 Voici le texte brut extrait du CV d'un collaborateur :
@@ -120,44 +78,68 @@ RÈGLES STRICTES ET NON NÉGOCIABLES :
 - Si l'agence n'est pas spécifiée dans le document : '{default_agency}'.
 """
 
-    with tempfile.NamedTemporaryFile('w', suffix='.json', delete=False, encoding='utf-8') as sf:
-        json.dump(CV_SCHEMA, sf, ensure_ascii=False)
+async def parse_cv_with_agy(raw_text: str, default_agency: str = "RÉGION NORD-OUEST") -> Dict[str, Any]:
+    """
+    Orchestrates the agy CLI (authenticated via Google OAuth / Google Pro) to parse and structure
+    the resume text against the official Pydantic schema.
+    """
+    prompt = _build_prompt(raw_text, default_agency)
+    schema = get_cv_extraction_json_schema()
+
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8") as sf:
+        json.dump(schema, sf, ensure_ascii=False)
         schema_path = sf.name
 
-    agy_bin = shutil.which('agy') or os.path.expanduser('~/.local/bin/agy')
+    agy_bin = settings.AGY_BIN_PATH
+
+    cmd = [
+        agy_bin,
+        "-p", prompt,
+        "--output-format", "json",
+        "--json-schema", schema_path,
+        "--disable-slash-commands",
+        "--effort", settings.AGY_EFFORT,
+        "--model", settings.AGY_MODEL,
+        "--print-timeout", f"{settings.AGY_TIMEOUT_SECONDS}s"
+    ]
+
+    logger.info(f"Starting agy CLI parser process (model: {settings.AGY_MODEL}, effort: {settings.AGY_EFFORT})")
 
     try:
-        cmd = [
-            agy_bin,
-            '-p', prompt,
-            '--output-format', 'json',
-            '--json-schema', schema_path,
-            '--disable-slash-commands',
-            '--effort', 'low',
-            '--model', 'gemini-3.8-flash-low'
-        ]
-        
         proc = await asyncio.create_subprocess_exec(
             *cmd,
-            cwd='/tmp',
+            cwd="/tmp",
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE
         )
-        stdout, stderr = await proc.communicate()
-        
+
+        try:
+            stdout, stderr = await asyncio.wait_for(
+                proc.communicate(),
+                timeout=settings.AGY_TIMEOUT_SECONDS + 15
+            )
+        except asyncio.TimeoutError:
+            proc.kill()
+            await proc.wait()
+            raise TimeoutError(f"Le processus agy a dépassé le délai imparti de {settings.AGY_TIMEOUT_SECONDS}s.")
+
         if proc.returncode != 0:
-            err_msg = stderr.decode('utf-8', errors='ignore')
+            err_msg = stderr.decode("utf-8", errors="ignore")
+            logger.error(f"agy CLI failed (code {proc.returncode}): {err_msg}")
             raise RuntimeError(f"Erreur agy CLI (code {proc.returncode}): {err_msg}")
-            
-        res_json = json.loads(stdout.decode('utf-8', errors='ignore'))
-        structured = res_json.get('structured_output')
-        if not structured and 'response' in res_json:
-            # Fallback parsing direct
-            structured = json.loads(res_json['response'])
-            
+
+        output_str = stdout.decode("utf-8", errors="ignore")
+        res_json = json.loads(output_str)
+
+        structured = res_json.get("structured_output")
+        if not structured and "response" in res_json:
+            structured = _clean_json_response(res_json["response"])
+
+        if not structured:
+            raise ValueError("Le modèle n'a pas retourné de structure de données valide.")
+
         return structured
-        
+
     finally:
         if os.path.exists(schema_path):
             os.remove(schema_path)
-
