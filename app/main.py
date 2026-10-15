@@ -2,7 +2,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core import settings, setup_logging, get_logger
@@ -34,7 +34,12 @@ app.add_middleware(
 # Mount static assets
 app.mount("/static", StaticFiles(directory=str(settings.STATIC_DIR)), name="static")
 
-@app.get("/", response_class=HTMLResponse)
+@app.api_route("/favicon.ico", methods=["GET", "HEAD"], include_in_schema=False)
+async def favicon():
+    favicon_path = settings.STATIC_DIR / "assets" / "favicon.ico"
+    return FileResponse(favicon_path, media_type="image/x-icon")
+
+@app.api_route("/", methods=["GET", "HEAD"], response_class=HTMLResponse)
 async def serve_index():
     index_file = settings.STATIC_DIR / "index.html"
     with open(index_file, "r", encoding="utf-8") as f:
