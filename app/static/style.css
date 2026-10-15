@@ -1,5 +1,9 @@
 /* Styles spécifiques pour le générateur de CV Ginger Burgeap */
 
+body {
+  font-family: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
 /* Themed text selection per Impeccable craft floor */
 ::selection {
   background-color: #96C63E;
