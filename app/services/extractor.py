@@ -1,51 +1,73 @@
 # -*- coding: utf-8 -*-
 import io
 import os
+from typing import Sequence
 import pypdf
 import pdfplumber
 import docx
 import pptx
 
+from app.core import get_logger
+
+logger = get_logger(__name__)
+
+def _format_table_row(cells: Sequence) -> str:
+    """Formats table row cells as pipe-separated text."""
+    row_text = " | ".join(cell.text.strip() for cell in cells if cell.text.strip())
+    return row_text
+
 def extract_text_from_pdf(file_bytes: bytes) -> str:
-    text_parts = []
-    
-    # Tentative 1 : pdfplumber
+    """
+    Extracts text from PDF using pdfplumber with a clean fallback to pypdf.
+    """
+    # Attempt 1: pdfplumber (best for layout and text positioning)
+    plumber_parts = []
     try:
         with pdfplumber.open(io.BytesIO(file_bytes)) as pdf:
             for page in pdf.pages:
                 extracted = page.extract_text()
                 if extracted:
-                    text_parts.append(extracted)
+                    plumber_parts.append(extracted.strip())
     except Exception as e:
-        print(f"[Extractor] pdfplumber error: {e}")
-        
-    joined = "\n".join(text_parts).strip()
-    if text_parts and len(joined) > 50:
-        return "\n\n".join(text_parts)
-        
-    # Tentative 2 : pypdf
+        logger.warning(f"pdfplumber extraction error: {e}")
+
+    joined_plumber = "\n".join(plumber_parts).strip()
+    if plumber_parts and len(joined_plumber) > 50:
+        return "\n\n".join(plumber_parts)
+
+    # Attempt 2: pypdf (fallback on fresh buffer if pdfplumber extracted nothing or failed)
+    pypdf_parts = []
     try:
         reader = pypdf.PdfReader(io.BytesIO(file_bytes))
         for page in reader.pages:
             t = page.extract_text()
             if t:
-                text_parts.append(t)
+                pypdf_parts.append(t.strip())
     except Exception as e:
-        print(f"[Extractor] pypdf error: {e}")
-        
-    return "\n\n".join(text_parts)
+        logger.warning(f"pypdf extraction error: {e}")
+
+    joined_pypdf = "\n".join(pypdf_parts).strip()
+    if pypdf_parts and len(joined_pypdf) > 50:
+        return "\n\n".join(pypdf_parts)
+
+    # If both extracted minimal content, return whichever has more text
+    if len(joined_plumber) >= len(joined_pypdf):
+        return "\n\n".join(plumber_parts) if plumber_parts else ""
+    return "\n\n".join(pypdf_parts) if pypdf_parts else ""
 
 def extract_text_from_docx(file_bytes: bytes) -> str:
+    """Extracts text from OpenXML Word (.docx) document including tables."""
     doc = docx.Document(io.BytesIO(file_bytes))
     paragraphs = [p.text for p in doc.paragraphs if p.text.strip()]
     for table in doc.tables:
         for row in table.rows:
-            row_text = " | ".join(cell.text.strip() for cell in row.cells if cell.text.strip())
+            row_text = _format_table_row(row.cells)
             if row_text:
                 paragraphs.append(row_text)
     return "\n\n".join(paragraphs)
 
 def extract_text_from_pptx(file_bytes: bytes) -> str:
+    """Extracts text from OpenXML PowerPoint (.pptx) document including tables."""
     prs = pptx.Presentation(io.BytesIO(file_bytes))
     text_runs = []
     for slide in prs.slides:
@@ -57,20 +79,35 @@ def extract_text_from_pptx(file_bytes: bytes) -> str:
                         text_runs.append(t)
             elif shape.has_table:
                 for row in shape.table.rows:
-                    row_text = " | ".join(cell.text.strip() for cell in row.cells if cell.text.strip())
+                    row_text = _format_table_row(row.cells)
                     if row_text:
                         text_runs.append(row_text)
     return "\n\n".join(text_runs)
 
 def extract_text(filename: str, file_bytes: bytes) -> str:
+    """
+    Main extraction dispatcher based on file extension.
+    Raises ValueError with a clear user message for obsolete binary formats (.doc, .ppt).
+    """
     ext = os.path.splitext(filename.lower())[1]
+    
+    if ext == ".doc":
+        raise ValueError(
+            "Le format binaire ancien Word (.doc) n'est pas supporté. "
+            "Veuillez enregistrer votre document en format .docx ou l'exporter en .pdf."
+        )
+    if ext == ".ppt":
+        raise ValueError(
+            "Le format binaire ancien PowerPoint (.ppt) n'est pas supporté. "
+            "Veuillez enregistrer votre présentation en format .pptx ou l'exporter en .pdf."
+        )
+
     if ext == ".pdf":
         return extract_text_from_pdf(file_bytes)
-    elif ext in [".docx", ".doc"]:
+    elif ext == ".docx":
         return extract_text_from_docx(file_bytes)
-    elif ext in [".pptx", ".ppt"]:
+    elif ext == ".pptx":
         return extract_text_from_pptx(file_bytes)
-    elif ext in [".txt", ".md"]:
-        return file_bytes.decode("utf-8", errors="ignore")
     else:
+        # Default text/markdown/plain decoding
         return file_bytes.decode("utf-8", errors="ignore")
