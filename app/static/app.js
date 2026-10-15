@@ -72,12 +72,24 @@
     btnDownloadZip: document.getElementById('btn-download-zip'),
     lblDownloadLang: document.getElementById('lbl-download-lang'),
 
-    // Live Viewer & Zoom
+    // Live Viewer & Interactive Canvas
+    rightColumnContainer: document.getElementById('right-column-container'),
+    pdfViewportContainer: document.getElementById('pdf-viewport-container'),
+    pdfStage: document.getElementById('pdf-stage'),
+    pdfSheetContainer: document.getElementById('pdf-sheet-container'),
+    pdfPanOverlay: document.getElementById('pdf-pan-overlay'),
     pdfViewerFrame: document.getElementById('pdf-viewer-frame'),
     pdfLoadingSpinner: document.getElementById('pdf-loading-spinner'),
+    btnToolHand: document.getElementById('btn-tool-hand'),
+    btnToolSelect: document.getElementById('btn-tool-select'),
+    btnPage1: document.getElementById('btn-page-1'),
+    btnPage2: document.getElementById('btn-page-2'),
     btnZoomIn: document.getElementById('btn-zoom-in'),
     btnZoomOut: document.getElementById('btn-zoom-out'),
+    btnZoomWidth: document.getElementById('btn-zoom-width'),
     btnZoomFit: document.getElementById('btn-zoom-fit'),
+    btnZoomReset: document.getElementById('btn-zoom-reset'),
+    btnFullscreen: document.getElementById('btn-fullscreen'),
     btnOpenTab: document.getElementById('btn-open-tab'),
     lblZoomVal: document.getElementById('lbl-zoom-val'),
 
@@ -330,42 +342,151 @@
   };
 
   // =========================================================================
-  // 5. PREVIEW & ZOOM CONTROLLER
+  // 5. INTERACTIVE CANVAS PREVIEW CONTROLLER (Canva / Figma style)
   // =========================================================================
   const PreviewController = {
-    applyZoom() {
-      try {
-        const doc = DOM.pdfViewerFrame.contentDocument || DOM.pdfViewerFrame.contentWindow.document;
-        if (doc) {
-          const pages = doc.querySelectorAll('.cv-page');
-          pages.forEach(page => {
-            page.style.transform = `scale(${State.zoomLevel.toFixed(2)})`;
-            page.style.transformOrigin = 'top center';
-            const scaledHeight = 1122 * State.zoomLevel;
-            page.style.marginBottom = `${Math.max(20, scaledHeight - 1122 + 40)}px`;
-          });
-        }
-      } catch (e) {
-        console.error('Zoom application error:', e);
+    // 2D Camera / Viewport State
+    panX: 0,
+    panY: 20,
+    zoom: 0.70,
+    minZoom: 0.30,
+    maxZoom: 2.20,
+
+    // Mouse / Drag State
+    isDragging: false,
+    dragStartX: 0,
+    dragStartY: 0,
+    initialPanX: 0,
+    initialPanY: 0,
+    currentTool: 'hand', // 'hand' or 'select'
+    isSpacePressed: false,
+    pageCount: 1,
+    _animTimer: null,
+
+    updateTransform(animate = false) {
+      if (!DOM.pdfStage) return;
+
+      if (animate) {
+        DOM.pdfStage.style.transition = 'transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1)';
+        clearTimeout(this._animTimer);
+        this._animTimer = setTimeout(() => {
+          if (DOM.pdfStage) DOM.pdfStage.style.transition = 'none';
+        }, 240);
+      } else {
+        DOM.pdfStage.style.transition = 'none';
+      }
+
+      DOM.pdfStage.style.transform = `translate3d(${this.panX.toFixed(1)}px, ${this.panY.toFixed(1)}px, 0) scale(${this.zoom.toFixed(3)})`;
+
+      if (DOM.lblZoomVal) {
+        DOM.lblZoomVal.textContent = `${Math.round(this.zoom * 100)}%`;
       }
     },
 
-    setZoom(val) {
-      State.zoomLevel = Math.max(0.35, Math.min(1.80, val));
-      if (DOM.lblZoomVal) DOM.lblZoomVal.textContent = `${Math.round(State.zoomLevel * 100)}%`;
-      this.applyZoom();
+    setZoomAtPoint(newZoom, clientX, clientY, animate = false) {
+      const clampedZoom = Math.min(this.maxZoom, Math.max(this.minZoom, newZoom));
+      if (!DOM.pdfViewportContainer) return;
+
+      const rect = DOM.pdfViewportContainer.getBoundingClientRect();
+      const mouseX = clientX - rect.left;
+      const mouseY = clientY - rect.top;
+
+      // Anchor formula keeping the point under the mouse invariant:
+      this.panX = mouseX - (mouseX - this.panX) * (clampedZoom / this.zoom);
+      this.panY = mouseY - (mouseY - this.panY) * (clampedZoom / this.zoom);
+      this.zoom = clampedZoom;
+
+      this.updateTransform(animate);
     },
 
-    autoFit() {
-      if (!DOM.pdfViewerFrame) return;
-      const vh = DOM.pdfViewerFrame.clientHeight - 40;
-      const vw = DOM.pdfViewerFrame.clientWidth - 40;
-      if (vh > 100 && vw > 100) {
-        const fitH = vh / 1122;
-        const fitW = vw / 794;
-        this.setZoom(Math.min(fitH, fitW, 0.90));
+    zoomIn() {
+      if (!DOM.pdfViewportContainer) return;
+      const rect = DOM.pdfViewportContainer.getBoundingClientRect();
+      this.setZoomAtPoint(this.zoom * 1.20, rect.left + rect.width / 2, rect.top + rect.height / 2, true);
+    },
+
+    zoomOut() {
+      if (!DOM.pdfViewportContainer) return;
+      const rect = DOM.pdfViewportContainer.getBoundingClientRect();
+      this.setZoomAtPoint(this.zoom / 1.20, rect.left + rect.width / 2, rect.top + rect.height / 2, true);
+    },
+
+    zoomReset(animate = true) {
+      if (!DOM.pdfViewportContainer) return;
+      const sheetWidth = 820;
+      this.zoom = 1.0;
+      this.panX = (DOM.pdfViewportContainer.clientWidth - sheetWidth * this.zoom) / 2;
+      this.panY = 24;
+      this.updateTransform(animate);
+    },
+
+    fitWidth(animate = true) {
+      if (!DOM.pdfViewportContainer) return;
+      const vw = DOM.pdfViewportContainer.clientWidth - 40;
+      const sheetWidth = 820;
+      this.zoom = Math.min(1.4, Math.max(0.40, vw / sheetWidth));
+      this.panX = Math.max(12, (DOM.pdfViewportContainer.clientWidth - sheetWidth * this.zoom) / 2);
+      this.panY = 20;
+      this.updateTransform(animate);
+    },
+
+    fitPage(animate = true) {
+      if (!DOM.pdfViewportContainer) return;
+      const vw = DOM.pdfViewportContainer.clientWidth - 40;
+      const vh = DOM.pdfViewportContainer.clientHeight - 40;
+      const sheetWidth = 820;
+      const sheetHeight = 1180;
+      const fitW = vw / sheetWidth;
+      const fitH = vh / sheetHeight;
+      this.zoom = Math.min(fitW, fitH, 1.0);
+      this.panX = (DOM.pdfViewportContainer.clientWidth - sheetWidth * this.zoom) / 2;
+      this.panY = Math.max(16, (DOM.pdfViewportContainer.clientHeight - sheetHeight * this.zoom) / 2);
+      this.updateTransform(animate);
+    },
+
+    goToPage(pageNum, animate = true) {
+      if (!DOM.pdfViewportContainer) return;
+      const sheetWidth = 820;
+      const pageHeight = 1146; // height of Page 1 with margin
+      this.panX = (DOM.pdfViewportContainer.clientWidth - sheetWidth * this.zoom) / 2;
+      if (pageNum === 1) {
+        this.panY = 20;
       } else {
-        this.setZoom(0.65);
+        this.panY = 20 - (pageHeight * this.zoom);
+      }
+      this.updateTransform(animate);
+    },
+
+    setTool(tool) {
+      this.currentTool = tool;
+      const isHand = (tool === 'hand');
+
+      if (DOM.btnToolHand && DOM.btnToolSelect) {
+        if (isHand) {
+          DOM.btnToolHand.className = 'px-2 py-1 rounded bg-white dark:bg-slate-800 text-burgeap-blue dark:text-burgeap-green shadow-xs transition flex items-center gap-1';
+          DOM.btnToolSelect.className = 'px-2 py-1 rounded text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition flex items-center gap-1';
+        } else {
+          DOM.btnToolSelect.className = 'px-2 py-1 rounded bg-white dark:bg-slate-800 text-burgeap-blue dark:text-burgeap-green shadow-xs transition flex items-center gap-1';
+          DOM.btnToolHand.className = 'px-2 py-1 rounded text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition flex items-center gap-1';
+        }
+      }
+
+      if (DOM.pdfPanOverlay) {
+        DOM.pdfPanOverlay.style.pointerEvents = (isHand || this.isSpacePressed) ? 'auto' : 'none';
+        DOM.pdfPanOverlay.style.cursor = (isHand || this.isSpacePressed) ? 'grab' : 'default';
+      }
+      if (DOM.pdfViewportContainer) {
+        DOM.pdfViewportContainer.style.cursor = (isHand || this.isSpacePressed) ? 'grab' : 'default';
+      }
+    },
+
+    toggleFullscreen() {
+      const container = DOM.rightColumnContainer;
+      if (!container) return;
+      if (!document.fullscreenElement) {
+        container.requestFullscreen().catch(err => console.error(err));
+      } else {
+        document.exitFullscreen().catch(err => console.error(err));
       }
     },
 
@@ -387,7 +508,30 @@
 
         DOM.pdfViewerFrame.onload = () => {
           DOM.pdfLoadingSpinner.classList.add('hidden');
-          this.applyZoom();
+          try {
+            const doc = DOM.pdfViewerFrame.contentDocument || DOM.pdfViewerFrame.contentWindow.document;
+            if (doc) {
+              const pages = doc.querySelectorAll('.cv-page');
+              this.pageCount = pages.length;
+              const iframeHeight = pages.length >= 2 ? 2360 : 1200;
+              DOM.pdfViewerFrame.style.height = `${iframeHeight}px`;
+
+              if (DOM.btnPage2) {
+                if (this.pageCount >= 2) {
+                  DOM.btnPage2.classList.remove('opacity-40', 'cursor-not-allowed');
+                  DOM.btnPage2.removeAttribute('disabled');
+                  DOM.btnPage2.title = 'Aller à la page 2 (2)';
+                } else {
+                  DOM.btnPage2.classList.add('opacity-40', 'cursor-not-allowed');
+                  DOM.btnPage2.setAttribute('disabled', 'true');
+                  DOM.btnPage2.title = 'Le CV tient sur 1 seule page';
+                }
+              }
+            }
+          } catch (e) {
+            console.warn('Frame inspection warning:', e);
+          }
+          this.fitWidth(false);
         };
       } catch (err) {
         console.error('Preview render error:', err);
@@ -396,29 +540,133 @@
     },
 
     bindEvents() {
-      if (DOM.btnZoomIn) DOM.btnZoomIn.addEventListener('click', () => this.setZoom(State.zoomLevel + 0.15));
-      if (DOM.btnZoomOut) DOM.btnZoomOut.addEventListener('click', () => this.setZoom(State.zoomLevel - 0.15));
-      if (DOM.btnZoomFit) DOM.btnZoomFit.addEventListener('click', () => this.autoFit());
+      // Toolbar Buttons
+      if (DOM.btnToolHand) DOM.btnToolHand.addEventListener('click', () => this.setTool('hand'));
+      if (DOM.btnToolSelect) DOM.btnToolSelect.addEventListener('click', () => this.setTool('select'));
+      if (DOM.btnPage1) DOM.btnPage1.addEventListener('click', () => this.goToPage(1));
+      if (DOM.btnPage2) DOM.btnPage2.addEventListener('click', () => this.goToPage(2));
+      if (DOM.btnZoomIn) DOM.btnZoomIn.addEventListener('click', () => this.zoomIn());
+      if (DOM.btnZoomOut) DOM.btnZoomOut.addEventListener('click', () => this.zoomOut());
+      if (DOM.btnZoomWidth) DOM.btnZoomWidth.addEventListener('click', () => this.fitWidth(true));
+      if (DOM.btnZoomFit) DOM.btnZoomFit.addEventListener('click', () => this.fitPage(true));
+      if (DOM.btnZoomReset) DOM.btnZoomReset.addEventListener('click', () => this.zoomReset(true));
+      if (DOM.btnFullscreen) DOM.btnFullscreen.addEventListener('click', () => this.toggleFullscreen());
 
-      if (DOM.btnOpenTab) {
-        DOM.btnOpenTab.addEventListener('click', async () => {
-          EditorController.saveCurrentForm();
-          const res = await fetch('/api/render-preview', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ data: State.cvData, lang: State.previewLang })
-          });
-          const blob = await res.blob();
-          window.open(URL.createObjectURL(blob), '_blank');
+      // Pointer Drag to Pan (Canva/Figma style)
+      const onPointerDown = (e) => {
+        if (e.button !== 0 && e.button !== 1) return; // Only left or middle click
+        const canDrag = (this.currentTool === 'hand' || this.isSpacePressed || e.button === 1);
+        if (!canDrag) return;
+
+        this.isDragging = true;
+        this.dragStartX = e.clientX;
+        this.dragStartY = e.clientY;
+        this.initialPanX = this.panX;
+        this.initialPanY = this.panY;
+
+        if (DOM.pdfViewportContainer) DOM.pdfViewportContainer.style.cursor = 'grabbing';
+        if (DOM.pdfPanOverlay) DOM.pdfPanOverlay.style.cursor = 'grabbing';
+      };
+
+      const onPointerMove = (e) => {
+        if (!this.isDragging) return;
+        const dx = e.clientX - this.dragStartX;
+        const dy = e.clientY - this.dragStartY;
+        this.panX = this.initialPanX + dx;
+        this.panY = this.initialPanY + dy;
+        this.updateTransform(false);
+      };
+
+      const onPointerUp = () => {
+        if (this.isDragging) {
+          this.isDragging = false;
+          const isHand = (this.currentTool === 'hand' || this.isSpacePressed);
+          if (DOM.pdfViewportContainer) DOM.pdfViewportContainer.style.cursor = isHand ? 'grab' : 'default';
+          if (DOM.pdfPanOverlay) DOM.pdfPanOverlay.style.cursor = isHand ? 'grab' : 'default';
+        }
+      };
+
+      if (DOM.pdfViewportContainer) {
+        DOM.pdfViewportContainer.addEventListener('mousedown', onPointerDown);
+        window.addEventListener('mousemove', onPointerMove);
+        window.addEventListener('mouseup', onPointerUp);
+
+        // Smart Wheel: Ctrl/Pinch = Zoom at cursor, Normal wheel = Smooth vertical pan, Shift = Horizontal pan
+        DOM.pdfViewportContainer.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          if (e.ctrlKey || e.metaKey) {
+            const zoomFactor = Math.pow(0.998, e.deltaY * 1.5);
+            this.setZoomAtPoint(this.zoom * zoomFactor, e.clientX, e.clientY, false);
+          } else if (e.shiftKey) {
+            this.panX -= e.deltaY * 0.9;
+            this.updateTransform(false);
+          } else {
+            this.panY -= e.deltaY * 0.9;
+            this.updateTransform(false);
+          }
+        }, { passive: false });
+
+        // Double click toggles between Fit Width and 100%
+        DOM.pdfViewportContainer.addEventListener('dblclick', () => {
+          if (Math.abs(this.zoom - 1.0) < 0.1) {
+            this.fitWidth(true);
+          } else {
+            this.zoomReset(true);
+          }
         });
       }
 
-      if (DOM.btnRefreshPreview) {
-        DOM.btnRefreshPreview.addEventListener('click', () => {
-          EditorController.saveCurrentForm();
-          this.refresh();
-        });
-      }
+      // Keyboard Shortcuts
+      window.addEventListener('keydown', (e) => {
+        const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+        const isContentEditable = document.activeElement && document.activeElement.isContentEditable;
+        if (['input', 'textarea', 'select'].includes(activeTag) || isContentEditable) return;
+
+        if (e.code === 'Space' && !this.isSpacePressed) {
+          this.isSpacePressed = true;
+          if (DOM.pdfPanOverlay) DOM.pdfPanOverlay.style.pointerEvents = 'auto';
+          if (DOM.pdfViewportContainer) DOM.pdfViewportContainer.style.cursor = 'grab';
+        } else if (e.key === 'h' || e.key === 'H') {
+          this.setTool('hand');
+        } else if (e.key === 'v' || e.key === 'V') {
+          this.setTool('select');
+        } else if (e.key === 'w' || e.key === 'W') {
+          this.fitWidth(true);
+        } else if (e.key === 'a' || e.key === 'A') {
+          this.fitPage(true);
+        } else if (e.key === '0') {
+          this.zoomReset(true);
+        } else if (e.key === '+' || e.key === '=') {
+          this.zoomIn();
+        } else if (e.key === '-') {
+          this.zoomOut();
+        } else if (e.key === '1') {
+          this.goToPage(1);
+        } else if (e.key === '2' && this.pageCount >= 2) {
+          this.goToPage(2);
+        } else if (e.key === 'f' || e.key === 'F') {
+          this.toggleFullscreen();
+        }
+      });
+
+      window.addEventListener('keyup', (e) => {
+        if (e.code === 'Space') {
+          this.isSpacePressed = false;
+          if (DOM.pdfPanOverlay) {
+            DOM.pdfPanOverlay.style.pointerEvents = (this.currentTool === 'hand') ? 'auto' : 'none';
+          }
+          if (DOM.pdfViewportContainer) {
+            DOM.pdfViewportContainer.style.cursor = (this.currentTool === 'hand') ? 'grab' : 'default';
+          }
+        }
+      });
+
+      // Window resize re-anchors
+      window.addEventListener('resize', () => {
+        if (DOM.viewEditor && !DOM.viewEditor.classList.contains('hidden')) {
+          this.fitWidth(false);
+        }
+      });
 
       if (DOM.btnPreviewFr) {
         DOM.btnPreviewFr.addEventListener('click', () => {
@@ -951,4 +1199,16 @@
     UploadController.bindEvents();
   });
 
+  // Expose for testing and automation
+  window.__App = {
+    State,
+    DOM,
+    ThemeController,
+    PreviewController,
+    EditorController,
+    UploadController,
+    CropperController
+  };
+
 })();
+

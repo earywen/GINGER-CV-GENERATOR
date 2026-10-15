@@ -97,26 +97,34 @@ html.dark h3 {
   color: #f8fafc;
 }
 
-/* Zoom Container Styling */
+/* Interactive Pan & Zoom Canvas Viewport */
 .pdf-viewport {
   background: radial-gradient(circle, #334155 0%, #0f172a 100%);
   color: #f8fafc;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  overflow: auto;
+  overflow: hidden;
   position: relative;
+  user-select: none;
 }
 html.dark .pdf-viewport {
   background: radial-gradient(circle, #1e293b 0%, #020617 100%);
   color: #f8fafc;
 }
 
-#pdf-zoom-wrapper {
-  transform-origin: top center;
-  transition: transform 0.15s ease-out;
-  box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.6), 0 8px 15px -6px rgba(0, 0, 0, 0.4); /* impeccable-disable-line design-system-color -- Sheet elevation shadows */
-  background: #ffffff;
+#pdf-stage {
+  will-change: transform;
+  transform-origin: 0 0;
+}
+
+#pdf-sheet-container {
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.1); /* impeccable-disable-line design-system-color -- Sheet elevation shadows */
+  background: transparent;
+}
+
+.cursor-grab {
+  cursor: grab;
+}
+.cursor-grabbing {
+  cursor: grabbing !important;
 }
 
 /* Circular Cropper Styling */
