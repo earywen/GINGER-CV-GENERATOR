@@ -62,13 +62,18 @@ html.dark input:focus, html.dark textarea:focus, html.dark select:focus {
   border-color: #96C63E !important;
 }
 
-/* Typography scale per DESIGN.md */
-body {
-  font-size: 14px;
+/* Base Layout & Typography scale per DESIGN.md */
+html, body {
+  background-color: #f1f5f9;
   color: #0f172a;
 }
-html.dark body {
+html.dark, html.dark body {
+  background-color: #020617;
   color: #f8fafc;
+}
+
+body {
+  font-size: 14px;
 }
 
 h1 {

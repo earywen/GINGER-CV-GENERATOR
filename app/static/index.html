@@ -41,20 +41,18 @@
     }
   </script>
 </head>
-<body class="h-full flex flex-col font-sans antialiased overflow-hidden selection:bg-burgeap-green selection:text-burgeap-dark transition-colors duration-200">
-  <!-- impeccable-disable nested-cards -- Structured upload wizard and modal canvases use intentional contained surfaces -->
-
+<body class="h-full flex flex-col font-sans antialiased overflow-hidden selection:bg-burgeap-green selection:text-burgeap-dark transition-colors duration-200 bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100">
   <!-- Navigation Header -->
   <header class="bg-burgeap-blue dark:bg-slate-900 text-white shadow-md border-b-4 border-burgeap-green shrink-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <div class="bg-white dark:bg-slate-800 px-2.5 py-1 rounded shadow-inner flex items-center">
+        <div class="bg-white px-2.5 py-1 rounded shadow-inner flex items-center">
           <img src="/static/assets/logo.png" alt="Ginger Burgeap" class="h-6 w-auto object-contain">
         </div>
         <div>
           <h1 class="text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
             Générateur de CV 2026
-            <span class="bg-burgeap-green text-burgeap-dark text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">1 à 2 Pages</span>
+            <span class="bg-burgeap-green text-burgeap-dark text-xs px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">1 à 2 Pages</span>
           </h1>
         </div>
       </div>
@@ -82,28 +80,28 @@
       
       <div class="text-center space-y-1.5">
         <h2 class="text-2xl font-black text-burgeap-blue dark:text-slate-100 tracking-tight">Transformez votre CV en format officiel 2026</h2>
-        <p class="text-sm text-slate-600 dark:text-slate-400 max-w-lg mx-auto">
+        <p class="text-sm text-slate-600 dark:text-slate-300 max-w-lg mx-auto">
           Déposez votre CV actuel (PDF, Word ou PowerPoint) et votre photo studio. L'IA extrait, structure et traduit instantanément votre profil sur une à deux pages A4 conformes.
         </p>
       </div>
 
-      <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-5">
+      <div class="space-y-4">
         
-        <!-- CV Dropzone -->
+        <!-- Step 1: CV Dropzone Card -->
         <div>
-          <label class="block text-xs font-bold text-burgeap-blue dark:text-burgeap-green uppercase tracking-wider mb-2">
+          <label class="block text-xs font-bold text-burgeap-blue dark:text-burgeap-green uppercase tracking-wider mb-1.5">
             1. Votre CV Actuel (PDF, Word, PPTX) <span class="text-red-500">*</span>
           </label>
-          <div id="cv-dropzone" class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-burgeap-blue dark:hover:border-burgeap-green bg-slate-50 dark:bg-slate-800/40 hover:bg-burgeap-lightBlue/30 dark:hover:bg-slate-800/70 rounded-xl p-6 text-center cursor-pointer transition flex flex-col items-center justify-center group">
+          <div id="cv-dropzone" class="bg-white dark:bg-slate-900 border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-burgeap-blue dark:hover:border-burgeap-green rounded-2xl p-6 sm:p-8 text-center cursor-pointer transition flex flex-col items-center justify-center group shadow-sm hover:shadow-md">
             <input type="file" id="cv-file-input" class="hidden" accept=".pdf,.docx,.doc,.pptx,.ppt,.txt">
             <div id="cv-dropzone-empty" class="space-y-2">
-              <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-slate-700 text-burgeap-blue dark:text-burgeap-green flex items-center justify-center mx-auto group-hover:scale-110 transition">
+              <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-slate-800 text-burgeap-blue dark:text-burgeap-green flex items-center justify-center mx-auto group-hover:scale-110 transition">
                 <i class="fa-solid fa-file-arrow-up text-xl"></i>
               </div>
               <p class="text-sm font-semibold text-slate-700 dark:text-slate-200">Glissez votre CV ici ou <span class="text-burgeap-blue dark:text-burgeap-green underline font-bold">parcourez vos fichiers</span></p>
-              <p class="text-xs text-slate-400 dark:text-slate-500">Formats acceptés : PDF, Word (.docx), PowerPoint (.pptx)</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Formats acceptés : PDF, Word (.docx), PowerPoint (.pptx)</p>
             </div>
-            <div id="cv-dropzone-filled" class="hidden flex items-center justify-between w-full bg-slate-100 dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+            <div id="cv-dropzone-filled" class="hidden flex items-center justify-between w-full p-2">
               <div class="flex items-center space-x-3 text-left truncate">
                 <i class="fa-solid fa-file-pdf text-red-500 text-2xl"></i>
                 <div class="truncate">
@@ -118,13 +116,13 @@
           </div>
         </div>
 
-        <!-- Photo & Initiales Section -->
+        <!-- Step 2: Photo & Initiales Cards -->
         <div>
-          <label class="block text-xs font-bold text-burgeap-blue dark:text-burgeap-green uppercase tracking-wider mb-2">
+          <label class="block text-xs font-bold text-burgeap-blue dark:text-burgeap-green uppercase tracking-wider mb-1.5">
             2. Photo Studio Portrait (Optionnelle)
           </label>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
-            <div id="photo-dropzone" class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-burgeap-blue dark:hover:border-burgeap-green bg-slate-50 dark:bg-slate-800/40 hover:bg-burgeap-lightBlue/30 dark:hover:bg-slate-800/70 rounded-xl p-4 text-center cursor-pointer transition flex flex-col items-center justify-center group">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 items-stretch">
+            <div id="photo-dropzone" class="bg-white dark:bg-slate-900 border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-burgeap-blue dark:hover:border-burgeap-green rounded-2xl p-5 text-center cursor-pointer transition flex flex-col items-center justify-center group shadow-sm hover:shadow-md">
               <input type="file" id="photo-file-input" class="hidden" accept="image/png,image/jpeg,image/jpg">
               <div id="photo-dropzone-empty" class="space-y-1">
                 <i class="fa-solid fa-camera text-slate-400 dark:text-slate-500 text-lg group-hover:text-burgeap-blue dark:group-hover:text-burgeap-green"></i>
@@ -145,8 +143,8 @@
               </div>
             </div>
 
-            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 flex items-start space-x-3">
-              <input type="checkbox" id="cb-initials-only" class="mt-1 h-4 w-4 text-burgeap-blue dark:text-burgeap-green rounded border-slate-300 dark:border-slate-600 focus:ring-burgeap-blue cursor-pointer">
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex items-center space-x-3 shadow-sm">
+              <input type="checkbox" id="cb-initials-only" class="mt-0.5 h-4 w-4 text-burgeap-blue dark:text-burgeap-green rounded border-slate-300 dark:border-slate-600 focus:ring-burgeap-blue cursor-pointer">
               <label for="cb-initials-only" class="text-xs text-slate-600 dark:text-slate-300 cursor-pointer">
                 <span class="font-bold text-slate-800 dark:text-slate-100 block">Pas de photo disponible</span>
                 Un médaillon circulaire avec les initiales officielles sera automatiquement généré.
@@ -155,26 +153,28 @@
           </div>
         </div>
 
-        <!-- Agence Selector -->
-        <div>
-          <label for="select-agency" class="block text-xs font-bold text-burgeap-blue dark:text-burgeap-green uppercase tracking-wider mb-2">
-            3. Agence & Région
-          </label>
-          <select id="select-agency" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-burgeap-blue dark:focus:ring-burgeap-green transition cursor-pointer">
-            <option value="RÉGION NORD-OUEST • AGENCE D’ARRAS">Région Nord-Ouest • Agence d’Arras</option>
-            <option value="RÉGION NORD-OUEST • AGENCE DE ROUEN">Région Nord-Ouest • Agence de Rouen</option>
-            <option value="RÉGION NORD-OUEST • AGENCE DE CAEN">Région Nord-Ouest • Agence de Caen</option>
-            <option value="DIRECTION RÉGIONALE NORD-OUEST & ILE-DE-FRANCE">Direction Régionale Nord-Ouest & Ile-de-France</option>
-            <option value="DIRECTION QUALITÉ, SÉCURITÉ, ENVIRONNEMENT ET MÉTROLOGIES">Direction QSE et Métrologies</option>
-            <option value="RÉGION ILE-DE-FRANCE • AGENCE D’ISSY-LES-MOULINEAUX">Région Ile-de-France • Agence d’Issy</option>
-          </select>
-        </div>
+        <!-- Step 3: Agence Selector & Launch Card -->
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 sm:p-6 space-y-4 shadow-sm">
+          <div>
+            <label for="select-agency" class="block text-xs font-bold text-burgeap-blue dark:text-burgeap-green uppercase tracking-wider mb-2">
+              3. Agence & Région
+            </label>
+            <select id="select-agency" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-burgeap-blue dark:focus:ring-burgeap-green transition cursor-pointer">
+              <option value="RÉGION NORD-OUEST • AGENCE D’ARRAS">Région Nord-Ouest • Agence d’Arras</option>
+              <option value="RÉGION NORD-OUEST • AGENCE DE ROUEN">Région Nord-Ouest • Agence de Rouen</option>
+              <option value="RÉGION NORD-OUEST • AGENCE DE CAEN">Région Nord-Ouest • Agence de Caen</option>
+              <option value="DIRECTION RÉGIONALE NORD-OUEST & ILE-DE-FRANCE">Direction Régionale Nord-Ouest & Ile-de-France</option>
+              <option value="DIRECTION QUALITÉ, SÉCURITÉ, ENVIRONNEMENT ET MÉTROLOGIES">Direction QSE et Métrologies</option>
+              <option value="RÉGION ILE-DE-FRANCE • AGENCE D’ISSY-LES-MOULINEAUX">Région Ile-de-France • Agence d’Issy</option>
+            </select>
+          </div>
 
-        <!-- Submit Button -->
-        <button id="btn-start-process" disabled class="w-full bg-burgeap-blue hover:bg-burgeap-dark dark:bg-burgeap-blue dark:hover:bg-slate-800 disabled:bg-slate-300 dark:disabled:bg-slate-800 disabled:cursor-not-allowed text-white font-bold py-3.5 px-6 rounded-xl shadow-lg hover:shadow-xl transition flex items-center justify-center space-x-2 text-base">
-          <i class="fa-solid fa-wand-magic-sparkles text-burgeap-green"></i>
-          <span>Générer mes CVs (FR & EN)</span>
-        </button>
+          <!-- Submit Button -->
+          <button id="btn-start-process" disabled class="w-full bg-burgeap-blue hover:bg-burgeap-dark dark:bg-burgeap-blue dark:hover:bg-slate-800 disabled:bg-slate-300 dark:disabled:bg-slate-800 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition flex items-center justify-center space-x-2 text-base">
+            <i class="fa-solid fa-wand-magic-sparkles text-burgeap-green"></i>
+            <span>Générer mes CVs (FR & EN)</span>
+          </button>
+        </div>
 
       </div>
     </div>
@@ -450,7 +450,7 @@
       </div>
       
       <!-- Cropper Image Area -->
-      <div class="p-5 flex flex-col items-center space-y-4 bg-slate-50 dark:bg-slate-800/40">
+      <div class="p-5 flex flex-col items-center space-y-4">
         <div class="w-full h-80 bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center relative shadow-inner">
           <img id="cropper-image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' fill='%230f172a'/%3E%3C/svg%3E" class="max-w-full max-h-full block" alt="Ajuster photo">
         </div>
