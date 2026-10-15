@@ -360,16 +360,68 @@
 
     // Mouse / Drag State
     isDragging: false,
-    dragStartX: 0,
-    dragStartY: 0,
-    initialPanX: 0,
-    initialPanY: 0,
+    lastPointerX: 0,
+    lastPointerY: 0,
     currentTool: 'hand', // 'hand' or 'select'
     isSpacePressed: false,
     pageCount: 1,
     shadowRoot: null,
     _animTimer: null,
     _hasInitialFit: false,
+
+    getDocDimensions() {
+      const sheetWidth = 794;
+      const pageHeight = 1123;
+      const gap = 24;
+      const count = Math.max(1, this.pageCount || 1);
+      return {
+        width: sheetWidth,
+        height: count * pageHeight + (count - 1) * gap
+      };
+    },
+
+    clampPan(targetPanX, targetPanY, targetZoom = this.zoom) {
+      if (!DOM.pdfViewportContainer) return { x: targetPanX, y: targetPanY };
+
+      const vw = DOM.pdfViewportContainer.clientWidth;
+      const vh = DOM.pdfViewportContainer.clientHeight;
+      if (!vw || !vh) return { x: targetPanX, y: targetPanY };
+
+      const doc = this.getDocDimensions();
+      const scaledW = doc.width * targetZoom;
+      const scaledH = doc.height * targetZoom;
+
+      const edgeMargin = 32;
+
+      // Horizontal clamping
+      let minPanX, maxPanX;
+      if (scaledW >= vw) {
+        minPanX = vw - scaledW - edgeMargin;
+        maxPanX = edgeMargin;
+      } else {
+        const centerX = (vw - scaledW) / 2;
+        const slack = Math.min(80, Math.max(20, (vw - scaledW) * 0.25));
+        minPanX = centerX - slack;
+        maxPanX = centerX + slack;
+      }
+
+      // Vertical clamping
+      let minPanY, maxPanY;
+      if (scaledH >= vh) {
+        minPanY = vh - scaledH - edgeMargin;
+        maxPanY = edgeMargin;
+      } else {
+        const centerY = Math.max(24, (vh - scaledH) / 2);
+        const slack = Math.min(80, Math.max(20, (vh - scaledH) * 0.25));
+        minPanY = centerY - slack;
+        maxPanY = centerY + slack;
+      }
+
+      return {
+        x: Math.min(maxPanX, Math.max(minPanX, targetPanX)),
+        y: Math.min(maxPanY, Math.max(minPanY, targetPanY))
+      };
+    },
 
     updateTransform(animate = false) {
       if (!DOM.pdfStage) return;
@@ -400,9 +452,13 @@
       const mouseY = clientY - rect.top;
 
       // Anchor formula keeping the point under the mouse invariant:
-      this.panX = mouseX - (mouseX - this.panX) * (clampedZoom / this.zoom);
-      this.panY = mouseY - (mouseY - this.panY) * (clampedZoom / this.zoom);
+      const newPanX = mouseX - (mouseX - this.panX) * (clampedZoom / this.zoom);
+      const newPanY = mouseY - (mouseY - this.panY) * (clampedZoom / this.zoom);
       this.zoom = clampedZoom;
+
+      const clamped = this.clampPan(newPanX, newPanY, this.zoom);
+      this.panX = clamped.x;
+      this.panY = clamped.y;
 
       this.updateTransform(animate);
     },
@@ -421,20 +477,26 @@
 
     zoomReset(animate = true) {
       if (!DOM.pdfViewportContainer) return;
-      const sheetWidth = 794;
+      const doc = this.getDocDimensions();
       this.zoom = 1.0;
-      this.panX = (DOM.pdfViewportContainer.clientWidth - sheetWidth * this.zoom) / 2;
-      this.panY = 24;
+      const targetX = (DOM.pdfViewportContainer.clientWidth - doc.width * this.zoom) / 2;
+      const targetY = 24;
+      const clamped = this.clampPan(targetX, targetY, this.zoom);
+      this.panX = clamped.x;
+      this.panY = clamped.y;
       this.updateTransform(animate);
     },
 
     fitWidth(animate = true) {
       if (!DOM.pdfViewportContainer) return;
       const vw = DOM.pdfViewportContainer.clientWidth - 48;
-      const sheetWidth = 794;
-      this.zoom = Math.min(1.6, Math.max(0.35, vw / sheetWidth));
-      this.panX = Math.max(16, (DOM.pdfViewportContainer.clientWidth - sheetWidth * this.zoom) / 2);
-      this.panY = 24;
+      const doc = this.getDocDimensions();
+      this.zoom = Math.min(1.6, Math.max(0.35, vw / doc.width));
+      const targetX = (DOM.pdfViewportContainer.clientWidth - doc.width * this.zoom) / 2;
+      const targetY = 24;
+      const clamped = this.clampPan(targetX, targetY, this.zoom);
+      this.panX = clamped.x;
+      this.panY = clamped.y;
       this.updateTransform(animate);
     },
 
@@ -442,27 +504,32 @@
       if (!DOM.pdfViewportContainer) return;
       const vw = DOM.pdfViewportContainer.clientWidth - 48;
       const vh = DOM.pdfViewportContainer.clientHeight - 48;
-      const sheetWidth = 794;
-      const sheetHeight = 1123;
-      const fitW = vw / sheetWidth;
-      const fitH = vh / sheetHeight;
+      const doc = this.getDocDimensions();
+      const singlePageH = 1123;
+      const fitW = vw / doc.width;
+      const fitH = vh / singlePageH;
       this.zoom = Math.min(fitW, fitH, 1.0);
-      this.panX = (DOM.pdfViewportContainer.clientWidth - sheetWidth * this.zoom) / 2;
-      this.panY = Math.max(16, (DOM.pdfViewportContainer.clientHeight - sheetHeight * this.zoom) / 2);
+      const targetX = (DOM.pdfViewportContainer.clientWidth - doc.width * this.zoom) / 2;
+      const targetY = Math.max(16, (DOM.pdfViewportContainer.clientHeight - singlePageH * this.zoom) / 2);
+      const clamped = this.clampPan(targetX, targetY, this.zoom);
+      this.panX = clamped.x;
+      this.panY = clamped.y;
       this.updateTransform(animate);
     },
 
     goToPage(pageNum, animate = true) {
       if (!DOM.pdfViewportContainer) return;
-      const sheetWidth = 794;
+      const doc = this.getDocDimensions();
       const pageHeight = 1123;
       const gap = 24;
-      this.panX = (DOM.pdfViewportContainer.clientWidth - sheetWidth * this.zoom) / 2;
-      if (pageNum === 1) {
-        this.panY = 24;
-      } else {
-        this.panY = 24 - ((pageHeight + gap) * this.zoom);
+      const targetX = (DOM.pdfViewportContainer.clientWidth - doc.width * this.zoom) / 2;
+      let targetY = 24;
+      if (pageNum === 2) {
+        targetY = 24 - ((pageHeight + gap) * this.zoom);
       }
+      const clamped = this.clampPan(targetX, targetY, this.zoom);
+      this.panX = clamped.x;
+      this.panY = clamped.y;
       this.updateTransform(animate);
     },
 
@@ -544,6 +611,11 @@
         if (!this._hasInitialFit) {
           this._hasInitialFit = true;
           this.fitWidth(false);
+        } else {
+          const clamped = this.clampPan(this.panX, this.panY, this.zoom);
+          this.panX = clamped.x;
+          this.panY = clamped.y;
+          this.updateTransform(false);
         }
       } catch (err) {
         console.error('Preview render error:', err);
@@ -586,7 +658,7 @@
         });
       }
 
-      // Pointer Drag to Pan (Canva/Figma style)
+      // Pointer Drag to Pan (Canva/Figma style) with boundary clamping
       const onPointerDown = (e) => {
         if (e.button !== 0 && e.button !== 1) return; // Only left or middle click
         const isBackground = (e.target === DOM.pdfViewportContainer || e.target === DOM.pdfStage || e.target === DOM.pdfSheetContainer);
@@ -594,10 +666,8 @@
         if (!canDrag) return;
 
         this.isDragging = true;
-        this.dragStartX = e.clientX;
-        this.dragStartY = e.clientY;
-        this.initialPanX = this.panX;
-        this.initialPanY = this.panY;
+        this.lastPointerX = e.clientX;
+        this.lastPointerY = e.clientY;
 
         if (DOM.pdfViewportContainer) DOM.pdfViewportContainer.classList.add('cursor-grabbing');
         if (DOM.pdfPanOverlay) DOM.pdfPanOverlay.classList.add('cursor-grabbing');
@@ -605,10 +675,14 @@
 
       const onPointerMove = (e) => {
         if (!this.isDragging) return;
-        const dx = e.clientX - this.dragStartX;
-        const dy = e.clientY - this.dragStartY;
-        this.panX = this.initialPanX + dx;
-        this.panY = this.initialPanY + dy;
+        const dx = e.clientX - this.lastPointerX;
+        const dy = e.clientY - this.lastPointerY;
+        this.lastPointerX = e.clientX;
+        this.lastPointerY = e.clientY;
+
+        const clamped = this.clampPan(this.panX + dx, this.panY + dy);
+        this.panX = clamped.x;
+        this.panY = clamped.y;
         this.updateTransform(false);
       };
 
@@ -624,18 +698,23 @@
         DOM.pdfViewportContainer.addEventListener('mousedown', onPointerDown);
         window.addEventListener('mousemove', onPointerMove);
         window.addEventListener('mouseup', onPointerUp);
+        window.addEventListener('blur', onPointerUp);
 
-        // Smart Wheel: Ctrl/Pinch = Zoom at cursor, Normal wheel = Smooth vertical pan, Shift = Horizontal pan
+        // Smart Wheel: Ctrl/Pinch = Zoom at cursor, Normal wheel = Smooth vertical pan, Shift = Horizontal pan (all strictly bounded)
         DOM.pdfViewportContainer.addEventListener('wheel', (e) => {
           e.preventDefault();
           if (e.ctrlKey || e.metaKey) {
             const zoomFactor = Math.pow(0.998, e.deltaY * 1.5);
             this.setZoomAtPoint(this.zoom * zoomFactor, e.clientX, e.clientY, false);
           } else if (e.shiftKey) {
-            this.panX -= e.deltaY * 0.9;
+            const clamped = this.clampPan(this.panX - e.deltaY * 0.9, this.panY);
+            this.panX = clamped.x;
+            this.panY = clamped.y;
             this.updateTransform(false);
           } else {
-            this.panY -= e.deltaY * 0.9;
+            const clamped = this.clampPan(this.panX, this.panY - e.deltaY * 0.9);
+            this.panX = clamped.x;
+            this.panY = clamped.y;
             this.updateTransform(false);
           }
         }, { passive: false });
