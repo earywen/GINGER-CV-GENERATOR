@@ -2,14 +2,10 @@
 import uuid
 import time
 import asyncio
-import copy
 from typing import Dict, Any, Optional
 
 from app.core import settings, get_logger
-from app.services.extractor import extract_text
-from app.services.ai_parser import parse_cv_with_agy
-from app.services.cache_manager import cache_manager
-from app.services.cv_pipeline import attach_photo_or_initials
+from app.services.cv_pipeline import ingest_cv
 
 logger = get_logger(__name__)
 
@@ -72,84 +68,27 @@ class JobManager:
         photo_b64: Optional[str],
         agency: str
     ):
+        """
+        Executes background CV processing by delegating directly to the deep ingest_cv pipeline.
+        Progress updates are seamlessly forwarded to the job state.
+        """
         try:
-            await self.update_job(
-                job_id,
-                step="Extraction du texte du document...",
-                desc="Lecture des pages et des tableaux du CV source.",
-                progress=20
+            async def progress_callback(progress: int, step: str, desc: str):
+                await self.update_job(
+                    job_id,
+                    progress=progress,
+                    step=step,
+                    desc=desc
+                )
+
+            structured_data = await ingest_cv(
+                cv_filename=cv_filename,
+                cv_bytes=cv_bytes,
+                photo_bytes=photo_bytes,
+                photo_b64=photo_b64,
+                agency=agency,
+                on_progress=progress_callback
             )
-
-            raw_text = extract_text(cv_filename, cv_bytes)
-            if not raw_text or len(raw_text.strip()) < 20:
-                await self.update_job(
-                    job_id,
-                    status="failed",
-                    error="Impossible d'extraire le texte du CV. Vérifiez le format du fichier."
-                )
-                return
-
-            # Check persistent content-addressed cache
-            cache_key = cache_manager.compute_cache_key(raw_text, agency=agency)
-            cached_data = cache_manager.get_cached_parse(cache_key)
-
-            if cached_data:
-                logger.info(f"Using cached parse result for job {job_id}")
-                await self.update_job(
-                    job_id,
-                    step="Document reconnu en cache !",
-                    desc="Restitution instantanée sans ré-exécution de l'IA.",
-                    progress=85
-                )
-                await asyncio.sleep(0.3)
-                structured_data = copy.deepcopy(cached_data)
-            else:
-                await self.update_job(
-                    job_id,
-                    step="Extraction et Structuration IA...",
-                    desc="Identification des missions, compétences et habilitations officielles.",
-                    progress=40
-                )
-
-                parse_task = asyncio.create_task(
-                    parse_cv_with_agy(raw_text, default_agency=agency)
-                )
-
-                start_time = time.time()
-                while not parse_task.done():
-                    await asyncio.sleep(0.5)
-                    elapsed = time.time() - start_time
-                    current_progress = min(95, int(20 + (elapsed / 45.0) * 75))
-
-                    if elapsed < 6:
-                        step = "Extraction et Structuration IA..."
-                        desc = "Identification des missions, compétences et habilitations officielles."
-                    elif elapsed < 12:
-                        step = "Traduction technique bilingue..."
-                        desc = "Génération du profil miroir officiel en anglais."
-                    else:
-                        step = "Formatage des projets de référence..."
-                        desc = "Harmonisation des intitulés et mots-clés selon la charte 2026."
-
-                    await self.update_job(
-                        job_id,
-                        progress=current_progress,
-                        step=step,
-                        desc=desc
-                    )
-
-                structured_data = await parse_task
-                # Save structured data in cache for future calls
-                cache_manager.save_cached_parse(cache_key, structured_data)
-
-            await self.update_job(
-                job_id,
-                step="Traitement de la photo...",
-                progress=95
-            )
-
-            # Process photo or generate official initials
-            attach_photo_or_initials(structured_data, photo_bytes=photo_bytes, photo_b64=photo_b64)
 
             await self.update_job(
                 job_id,

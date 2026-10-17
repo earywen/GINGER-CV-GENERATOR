@@ -23,10 +23,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from app.core import get_logger, settings
-from app.services.extractor import extract_text
-from app.services.ai_parser import parse_cv_with_agy
-from app.services.cache_manager import cache_manager
-from app.services.cv_pipeline import attach_photo_or_initials
+from app.services.cv_pipeline import ingest_cv, attach_photo_or_initials
 from app.services.pdf_engine import generate_pdf_bytes
 from app.utils.formatters import sanitize_filename
 
@@ -145,13 +142,7 @@ async def process_collaborator(
     print(f"  • Photo     : {task.photo_file.name if task.photo_file else 'Aucune (initiales automatiques)'}")
 
     try:
-        # 1. Extraction du texte source
-        cv_bytes = task.source_cv_file.read_bytes()
-        raw_text = extract_text(task.source_cv_file.name, cv_bytes)
-        if not raw_text or len(raw_text.strip()) < 30:
-            raise ValueError("Le texte extrait du document est trop court ou vide.")
-
-        # 2. Vérification d'un JSON local déjà ajusté ou du cache disque
+        # 1. Vérification d'un JSON local déjà ajusté ou appel au pipeline unifié
         json_filename = f"{task.code.lower()}_data_multirefs.json"
         task_json_path = task.cv_dir / json_filename
 
@@ -159,39 +150,22 @@ async def process_collaborator(
             print(f"  📄 Données locales trouvées (ajustements conservés) : {json_filename}")
             structured_data = json.loads(task_json_path.read_text(encoding="utf-8"))
             task.cached = True
-        else:
-            cache_key = cache_manager.compute_cache_key(raw_text, agency=agency)
-            cached_data = None if force_parse else cache_manager.get_cached_parse(cache_key)
-
-            if cached_data:
-                print(f"  ⚡ Cache HIT : Données récupérées instantanément (0 token)")
-                structured_data = json.loads(json.dumps(cached_data))
-                task.cached = True
+            if task.photo_file and task.photo_file.exists():
+                photo_bytes = task.photo_file.read_bytes()
+                attach_photo_or_initials(structured_data, photo_bytes=photo_bytes)
             else:
-                print(f"  🤖 Appel Gemini 3.8 Flash (agy CLI) en cours...")
-                start_llm = time.time()
-                structured_data = await parse_cv_with_agy(raw_text, default_agency=agency)
-                elapsed_llm = time.time() - start_llm
-                print(f"  ✓ Analyse IA terminée avec succès en {elapsed_llm:.1f}s")
-                cache_manager.save_cached_parse(cache_key, structured_data)
-                task.cached = False
-
-                if delay_after_llm > 0:
-                    print(f"  ⏳ Pause de courtoisie de {delay_after_llm}s...")
-                    await asyncio.sleep(delay_after_llm)
-
-        collab_name = structured_data.get("name", task.folder_name)
-        task.collab_name = collab_name
-        print(f"  👤 Collaborateur identifié : {collab_name} ({structured_data.get('role_fr')})")
-
-        # 3. Association de la photo studio
-        if task.photo_file and task.photo_file.exists():
-            photo_bytes = task.photo_file.read_bytes()
-            attach_photo_or_initials(structured_data, photo_bytes=photo_bytes)
-            print(f"  🖼 Photo studio recadrée et intégrée")
+                attach_photo_or_initials(structured_data, photo_bytes=None)
         else:
-            attach_photo_or_initials(structured_data, photo_bytes=None)
-            print(f"  🔤 Initiales générées : {structured_data.get('initials')}")
+            photo_bytes = task.photo_file.read_bytes() if (task.photo_file and task.photo_file.exists()) else None
+            print(f"  ⚡ Exécution via le pipeline unifié ingest_cv (cache & IA)...")
+            cv_bytes = task.source_cv_file.read_bytes()
+            structured_data = await ingest_cv(
+                cv_filename=task.source_cv_file.name,
+                cv_bytes=cv_bytes,
+                photo_bytes=photo_bytes,
+                agency=agency
+            )
+            task.cached = False
 
         # 4. Sauvegarde du fichier JSON multiréférences
         task_json_path.write_text(json.dumps(structured_data, ensure_ascii=False, indent=2), encoding="utf-8")

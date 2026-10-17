@@ -12,14 +12,9 @@ from app.models.cv import (
     CropPhotoResponse,
 )
 from app.services.job_manager import job_manager
-from app.services.extractor import extract_text
-from app.services.ai_parser import parse_cv_with_agy
 from app.services.image_processor import crop_studio_bust
-from app.services.cache_manager import cache_manager
 from app.services.session_manager import session_manager
-from app.utils.formatters import compute_initials
-
-from app.services.cv_pipeline import attach_photo_or_initials, parse_and_cache_cv
+from app.services.cv_pipeline import ingest_cv
 
 logger = get_logger(__name__)
 router = APIRouter(prefix="/api", tags=["CV Analysis & Sessions"])
@@ -85,11 +80,15 @@ async def parse_cv_sync_endpoint(
     """Direct synchronous parse endpoint with disk-cache acceleration."""
     try:
         cv_bytes = await cv_file.read()
-        raw_text = extract_text(cv_file.filename or "cv.pdf", cv_bytes)
-        structured_data = await parse_and_cache_cv(raw_text, agency=agency)
-        
         p_bytes = await photo_file.read() if photo_file else None
-        attach_photo_or_initials(structured_data, photo_bytes=p_bytes, photo_b64=photo_b64)
+        
+        structured_data = await ingest_cv(
+            cv_filename=cv_file.filename or "cv.pdf",
+            cv_bytes=cv_bytes,
+            photo_bytes=p_bytes,
+            photo_b64=photo_b64,
+            agency=agency
+        )
                 
         return {"status": "success", "data": structured_data}
         
