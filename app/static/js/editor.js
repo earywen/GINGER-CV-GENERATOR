@@ -356,7 +356,7 @@ export const EditorController = {
                 if (this._onPreviewRefresh) this._onPreviewRefresh(false);
               });
             }
-          }).catch((err) => alert('Erreur traitement image : ' + err.message));
+          }).catch((err) => Utils.toast('Erreur traitement image : ' + err.message, 'error'));
         }
       });
     }

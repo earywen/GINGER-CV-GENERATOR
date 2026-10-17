@@ -67,5 +67,28 @@ export const Utils = {
       reader.onerror = () => reject(new Error('Erreur de lecture du fichier image.'));
       reader.readAsDataURL(file);
     });
+  },
+
+  toast(message, type = 'info') {
+    const toast = document.getElementById('session-toast');
+    const toastMsg = document.getElementById('session-toast-msg');
+    if (!toast || !toastMsg) return;
+
+    toastMsg.textContent = message;
+    const dot = toast.querySelector('div');
+    if (dot) {
+      if (type === 'error') {
+        dot.className = 'w-2 h-2 rounded-full bg-rose-500 shrink-0';
+      } else if (type === 'warning') {
+        dot.className = 'w-2 h-2 rounded-full bg-amber-400 shrink-0';
+      } else {
+        dot.className = 'w-2 h-2 rounded-full bg-burgeap-green shrink-0';
+      }
+    }
+    toast.classList.remove('hidden');
+    clearTimeout(this._toastTimeout);
+    this._toastTimeout = setTimeout(() => {
+      toast.classList.add('hidden');
+    }, 4500);
   }
 };

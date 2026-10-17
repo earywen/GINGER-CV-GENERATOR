@@ -116,5 +116,16 @@ export const DOM = {
   get tabAboutCredits() { return get('tab-about-credits'); },
   get panelAboutDesc() { return get('panel-about-desc'); },
   get panelAboutGuide() { return get('panel-about-guide'); },
-  get panelAboutCredits() { return get('panel-about-credits'); }
+  get panelAboutCredits() { return get('panel-about-credits'); },
+
+  // Confirm Modal
+  get modalConfirm() { return get('modal-confirm'); },
+  get modalConfirmTitle() { return get('modal-confirm-title'); },
+  get modalConfirmMessage() { return get('modal-confirm-message'); },
+  get modalConfirmIcon() { return get('modal-confirm-icon'); },
+  get modalConfirmIconWrap() { return get('modal-confirm-icon-wrap'); },
+  get modalConfirmBtnCancel() { return get('modal-confirm-btn-cancel'); },
+  get modalConfirmBtnAccept() { return get('modal-confirm-btn-accept'); },
+  get modalConfirmAcceptText() { return get('modal-confirm-accept-text'); },
+  get modalConfirmCancelText() { return get('modal-confirm-cancel-text'); }
 };

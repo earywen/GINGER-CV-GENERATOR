@@ -42,7 +42,7 @@ export const UploadController = {
           DOM.photoPreviewImg.src = newDataUrl;
         });
       }
-    }).catch((err) => alert('Erreur image : ' + err.message));
+    }).catch((err) => Utils.toast('Erreur image : ' + err.message, 'error'));
   },
 
   updateStartButton() {
@@ -124,7 +124,7 @@ export const UploadController = {
       }
 
     } catch (err) {
-      alert('Erreur : ' + err.message);
+      Utils.toast('Erreur : ' + err.message, 'error');
       DOM.viewLoading.classList.add('hidden');
       DOM.viewUpload.classList.remove('hidden');
       DOM.btnResetTop.classList.add('hidden');

@@ -10,7 +10,7 @@ import { PreviewController } from './viewer.js';
 import { EditorController } from './editor.js';
 import { UploadController } from './jobs.js';
 import { SessionController } from './session.js';
-import { AboutController } from './modals.js';
+import { AboutController, ConfirmModal } from './modals.js';
 
 function initApp() {
   ThemeController.init();
@@ -52,11 +52,20 @@ function initApp() {
 
   // Wire Modals
   AboutController.init();
+  ConfirmModal.init();
 
   // Header reset button
   if (DOM.btnResetTop) {
-    DOM.btnResetTop.addEventListener('click', () => {
-      if (confirm('Voulez-vous recommencer pour un nouveau collaborateur ? Le brouillon actuel sera réinitialisé.')) {
+    DOM.btnResetTop.addEventListener('click', async () => {
+      const confirmed = await ConfirmModal.show({
+        title: 'Nouveau collaborateur',
+        message: 'Voulez-vous recommencer pour un nouveau collaborateur ? Le brouillon actuel sera réinitialisé.',
+        acceptText: 'Recommencer',
+        cancelText: 'Annuler',
+        danger: false,
+        icon: 'fa-solid fa-arrows-rotate'
+      });
+      if (confirmed) {
         SessionController.clearSession();
       }
     });
@@ -79,5 +88,6 @@ window.__App = {
   UploadController,
   CropperController,
   SessionController,
-  AboutController
+  AboutController,
+  ConfirmModal
 };
