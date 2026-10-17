@@ -321,7 +321,7 @@ export const FeedbackController = {
       },
       activeStage: isEditorActive ? 'editor' : 'upload',
       hasLoadedCv: !!(State && State.cvData),
-      appVersion: '2.5.0',
+      appVersion: '2.6.0',
       timestamp: new Date().toISOString()
     };
   },

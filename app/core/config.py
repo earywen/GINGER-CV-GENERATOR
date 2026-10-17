@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     )
 
     APP_TITLE: str = "Ginger Burgeap CV Generator 2026"
-    APP_VERSION: str = "2.5.0"
+    APP_VERSION: str = "2.6.0"
     HOST: str = "0.0.0.0"
     PORT: int = 8085
     LOG_LEVEL: str = "INFO"

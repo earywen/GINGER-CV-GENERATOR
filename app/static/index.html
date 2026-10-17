@@ -547,7 +547,7 @@
           <div>
             <div class="flex items-center gap-2">
               <h3 id="modal-about-title" class="font-bold text-base sm:text-lg leading-tight text-white">Générateur de CV Ginger Burgeap</h3>
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-burgeap-green/20 text-burgeap-green border border-burgeap-green/30">v2.5.0</span>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-burgeap-green/20 text-burgeap-green border border-burgeap-green/30">v2.6.0</span>
             </div>
             <p class="text-xs text-slate-300 mt-0.5">Outil officiel de standardisation & d'ingénierie des CV d'experts</p>
           </div>
@@ -700,8 +700,23 @@
               
               <div>
                 <div class="flex items-center gap-2">
-                  <span class="font-bold text-slate-900 dark:text-slate-100 text-xs">v2.5.0</span>
+                  <span class="font-bold text-slate-900 dark:text-slate-100 text-xs">v2.6.0</span>
                   <span class="text-[10px] text-burgeap-green font-bold">Actuelle</span>
+                </div>
+                <ul class="text-[11px] text-slate-600 dark:text-slate-400 list-disc list-inside mt-0.5 space-y-0.5">
+                  <li>Module de Feedback & Signalement d'anomalies complet (Bug, Idée, Autre) avec support du glisser-déposer et <kbd class="px-1 py-0.2 rounded bg-slate-200 dark:bg-slate-700 font-mono text-[9px]">Ctrl+V</kbd> de captures d'écran.</li>
+                  <li>Instantané technique facultatif et persistance locale des retours sur le serveur avec synchronisation GitHub Issues.</li>
+                  <li>Suppression intégrale des dialogues et alertes natifs du navigateur au profit de modales ergonomiques et de toasts Burgeap.</li>
+                  <li>Approfondissement architectural du Document Engine et génération asynchrone du bundle bilingue ZIP.</li>
+                  <li>Unification du pipeline d'ingestion sous l'interface <code>ingest_cv</code> et glossaire métier canonique (<code>GLOSSARY.md</code>).</li>
+                  <li>Suite d'icônes et favicons officiels Ginger Burgeap multi-résolutions.</li>
+                  <li>Suite de tests automatisés étendue à 64 tests de validation et de non-régression.</li>
+                </ul>
+              </div>
+
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-slate-900 dark:text-slate-100 text-xs">v2.5.0</span>
                 </div>
                 <ul class="text-[11px] text-slate-600 dark:text-slate-400 list-disc list-inside mt-0.5 space-y-0.5">
                   <li>Architecture frontend modernisée en modules ES natifs (ESM) isolés sous <code>app/static/js/</code>.</li>
