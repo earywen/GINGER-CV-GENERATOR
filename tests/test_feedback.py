@@ -26,7 +26,7 @@ def test_feedback_payload_validation():
     payload = FeedbackPayload(
         category="bug",
         message="Bouton d'export PDF inactif sur Firefox",
-        contact="test@ginger-burgeap.com",
+        contact="h.hogie@groupeginger.com",
         include_diagnostics=True,
         diagnostics={"browser": "Firefox 125"}
     )
@@ -95,7 +95,7 @@ def test_feedback_api_endpoint(temp_feedback_dir):
         response = client.post("/api/feedback", json={
             "category": "bug",
             "message": "Le formulaire ne se valide pas lors de l'ajout d'une mission.",
-            "contact": "collab@burgeap.fr",
+            "contact": "l.brigaud@groupeginger.com",
             "include_diagnostics": True,
             "diagnostics": {"stage": "editor"}
         })
