@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
+import os
 import unittest
 import io
 import docx
 import pptx
-from app.services.extractor import extract_text, extract_text_from_docx, extract_text_from_pptx
+from app.services.extractor import extract_text, extract_text_from_docx, extract_text_from_pptx, extract_text_with_anymd
 
 class TestExtractor(unittest.TestCase):
     def test_plain_text_and_markdown(self):
@@ -52,6 +52,15 @@ class TestExtractor(unittest.TestCase):
 
         extracted = extract_text("presentation.pptx", file_bytes)
         self.assertIn("Présentation Compétences Ginger Burgeap", extracted)
+
+    def test_anymd_extraction_with_real_pdf(self):
+        sample_path = "/home/beelink/projets/burgeap-cv-generator/CV GINGER BURGEAP 2026/ROUEN/CV Rouen/Laurent_BRIGAUD_LABR/LABR.pdf"
+        if os.path.exists(sample_path):
+            with open(sample_path, "rb") as f:
+                content = f.read()
+            extracted = extract_text("LABR.pdf", content)
+            self.assertIn("BRIGAUD", extracted)
+            self.assertIn("Chef de Projets", extracted)
 
 if __name__ == "__main__":
     unittest.main()

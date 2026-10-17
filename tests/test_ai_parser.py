@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
-from app.services.ai_parser import _clean_json_response, _build_prompt
+from app.services.ai_parser import _clean_json_response, _build_prompt, _is_french_text
 from app.models.cv import get_cv_extraction_json_schema
 
 class TestAiParser(unittest.TestCase):
@@ -24,6 +24,10 @@ class TestAiParser(unittest.TestCase):
         self.assertIn("GINGER BURGEAP", prompt)
         self.assertIn("RÈGLE ANTI-CONFUSION PRESTATAIRES", prompt)
         self.assertIn("RÉGION NORD-OUEST", prompt)
+        self.assertIn("RÈGLE D'OR DES RÉFÉRENCES GINGER BURGEAP", prompt)
+        self.assertIn("RÈGLE ANTI-REDONDANCE QUALIFICATIONS", prompt)
+        self.assertIn("DISTINCTION RIGOUREUSE INGÉNIERIE CONSEIL vs TRAVAUX DE CHANTIER", prompt)
+        self.assertIn("DISTINCTION TITRE DE POSTE vs ENTITÉ DE RATTACHEMENT", prompt)
 
     def test_extraction_schema_has_required_fields(self):
         schema = get_cv_extraction_json_schema()
@@ -33,6 +37,12 @@ class TestAiParser(unittest.TestCase):
         self.assertIn("trigram", required)
         self.assertIn("role_fr", required)
         self.assertIn("refs_fr", required)
+
+    def test_is_french_text_detection(self):
+        fr_sample = "Luis est un ingénieur avec 10 années d'expérience dans les projets industriels."
+        en_sample = "Luis is an environmental engineer with 10 years of experience in contaminated sites."
+        self.assertTrue(_is_french_text(fr_sample))
+        self.assertFalse(_is_french_text(en_sample))
 
 if __name__ == "__main__":
     unittest.main()

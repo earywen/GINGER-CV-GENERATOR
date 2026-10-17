@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 import io
 import os
-from typing import Sequence
+import subprocess
+import tempfile
+import shutil
+from typing import Sequence, Optional
 import pypdf
 import pdfplumber
 import docx
@@ -10,6 +13,46 @@ import pptx
 from app.core import get_logger
 
 logger = get_logger(__name__)
+
+def extract_text_with_anymd(file_bytes: bytes, ext: str = ".pdf") -> Optional[str]:
+    """
+    Extracts structured Markdown from file bytes using anymd CLI.
+    Preserves multi-column layout, markdown tables, and supports OCR on scanned documents.
+    """
+    cmd = None
+    if shutil.which("anymd"):
+        cmd = ["anymd"]
+    elif shutil.which("npx"):
+        cmd = ["npx", "--yes", "@sylphx/anymd"]
+
+    if not cmd:
+        return None
+
+    with tempfile.NamedTemporaryFile(suffix=ext, delete=False) as tmp:
+        tmp.write(file_bytes)
+        tmp_path = tmp.name
+
+    try:
+        proc = subprocess.run(
+            cmd + [tmp_path],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            timeout=15
+        )
+        if proc.returncode == 0:
+            out = proc.stdout.strip()
+            if len(out) > 50:
+                return out
+    except Exception as e:
+        logger.warning(f"anymd extraction error: {e}")
+    finally:
+        if os.path.exists(tmp_path):
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass
+    return None
 
 def _format_table_row(cells: Sequence) -> str:
     """Formats table row cells as pipe-separated text."""
@@ -103,6 +146,9 @@ def extract_text(filename: str, file_bytes: bytes) -> str:
         )
 
     if ext == ".pdf":
+        anymd_text = extract_text_with_anymd(file_bytes, ".pdf")
+        if anymd_text:
+            return anymd_text
         return extract_text_from_pdf(file_bytes)
     elif ext == ".docx":
         return extract_text_from_docx(file_bytes)

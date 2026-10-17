@@ -27,5 +27,15 @@ class TestTemplateContextBuilder(unittest.TestCase):
         self.assertEqual(ctx["role"], "Project Manager in Polluted Sites and Soils")
         self.assertIn("North-West Regional Directorate", ctx["footer_text"])
 
+    def test_direction_des_metiers_footer(self):
+        footer_fr = get_footer_text("DIRECTION DES MÉTIERS • PÔLE MÉTIER SITES ET SOLS POLLUÉS", is_fr=True)
+        self.assertEqual(footer_fr, "Ginger Burgeap – Direction des Métiers")
+
+        footer_en = get_footer_text("TECHNICAL EXPERTISE DIRECTORATE • CONTAMINATED SITES & SOILS EXPERTISE CENTER", is_fr=False)
+        self.assertEqual(footer_en, "Ginger Burgeap – Technical Expertise Directorate")
+
+        footer_en_metier = get_footer_text("DIRECTION DES METIERS", is_fr=False)
+        self.assertEqual(footer_en_metier, "Ginger Burgeap – Technical Expertise Directorate")
+
 if __name__ == "__main__":
     unittest.main()

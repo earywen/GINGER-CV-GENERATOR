@@ -17,15 +17,19 @@ def get_footer_text(agency_str: Optional[str], is_fr: bool) -> str:
             return "Ginger Burgeap – Direction Régionale Ile-de-France"
         elif "QSE" in u or "QUALIT" in u:
             return "Ginger Burgeap – Direction QSE & Métrologies"
+        elif "MÉTIER" in u or "METIER" in u:
+            return "Ginger Burgeap – Direction des Métiers"
         else:
             return "Ginger Burgeap – Direction Régionale Nord-Ouest"
     else:
-        if "ILE-DE-FRANCE" in u and "NORD-OUEST" in u:
+        if "ILE-DE-FRANCE" in u and ("NORD-OUEST" in u or "NORTH-WEST" in u):
             return "Ginger Burgeap – North-West & Ile-de-France Regional Directorate"
         elif "ILE-DE-FRANCE" in u:
             return "Ginger Burgeap – Ile-de-France Regional Directorate"
         elif "QSE" in u or "QUALIT" in u:
             return "Ginger Burgeap – QSE & Metrology Directorate"
+        elif "MÉTIER" in u or "METIER" in u or "TECHNICAL EXPERTISE" in u or "EXPERTISE DIRECTORATE" in u:
+            return "Ginger Burgeap – Technical Expertise Directorate"
         else:
             return "Ginger Burgeap – North-West Regional Directorate"
 
