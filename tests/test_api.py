@@ -12,6 +12,8 @@ class TestApiEndpointsParity(unittest.TestCase):
         res = self.client.get("/")
         self.assertEqual(res.status_code, 200)
         self.assertIn("Générateur de CV Ginger Burgeap", res.text)
+        self.assertIn("btn-feedback", res.text)
+        self.assertIn("modal-feedback", res.text)
 
     def test_render_html(self):
         res = self.client.post("/api/render-html", json={"data": SAMPLE_CV_DATA, "lang": "fr"})

@@ -10,7 +10,7 @@ import { PreviewController } from './viewer.js';
 import { EditorController } from './editor.js';
 import { UploadController } from './jobs.js';
 import { SessionController } from './session.js';
-import { AboutController, ConfirmModal } from './modals.js';
+import { AboutController, ConfirmModal, FeedbackController } from './modals.js';
 
 function initApp() {
   ThemeController.init();
@@ -53,6 +53,7 @@ function initApp() {
   // Wire Modals
   AboutController.init();
   ConfirmModal.init();
+  FeedbackController.init();
 
   // Header reset button
   if (DOM.btnResetTop) {
@@ -89,5 +90,6 @@ window.__App = {
   CropperController,
   SessionController,
   AboutController,
-  ConfirmModal
+  ConfirmModal,
+  FeedbackController
 };

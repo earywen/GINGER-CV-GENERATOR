@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from pathlib import Path
 import shutil
-from typing import List
+from typing import List, Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
 
@@ -61,5 +61,10 @@ class Settings(BaseSettings):
     # Job cleanup
     JOB_EXPIRATION_SECONDS: int = 1800
     JOB_MAX_STORED: int = 200
+
+    # User Feedback & Issue Reporting
+    FEEDBACKS_DIR: Path = DATA_DIR / "feedbacks"
+    GITHUB_FEEDBACK_TOKEN: Optional[str] = None
+    GITHUB_FEEDBACK_REPO: str = "earywen/GINGER-CV-GENERATOR"
 
 settings = Settings()

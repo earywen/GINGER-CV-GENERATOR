@@ -127,5 +127,25 @@ export const DOM = {
   get modalConfirmBtnCancel() { return get('modal-confirm-btn-cancel'); },
   get modalConfirmBtnAccept() { return get('modal-confirm-btn-accept'); },
   get modalConfirmAcceptText() { return get('modal-confirm-accept-text'); },
-  get modalConfirmCancelText() { return get('modal-confirm-cancel-text'); }
+  get modalConfirmCancelText() { return get('modal-confirm-cancel-text'); },
+
+  // Feedback Modal
+  get btnFeedback() { return get('btn-feedback'); },
+  get modalFeedback() { return get('modal-feedback'); },
+  get btnFeedbackClose() { return get('btn-feedback-close'); },
+  get btnFeedbackCancel() { return get('btn-feedback-cancel'); },
+  get btnFeedbackSubmit() { return get('btn-feedback-submit'); },
+  get btnFeedbackSubmitText() { return get('btn-feedback-submit-text'); },
+  get btnFeedbackSubmitIcon() { return get('btn-feedback-submit-icon'); },
+  get feedbackPillBug() { return get('feedback-pill-bug'); },
+  get feedbackPillIdea() { return get('feedback-pill-idea'); },
+  get feedbackPillOther() { return get('feedback-pill-other'); },
+  get feedbackMessage() { return get('feedback-message'); },
+  get feedbackContact() { return get('feedback-contact'); },
+  get feedbackScreenshotInput() { return get('feedback-screenshot-input'); },
+  get feedbackScreenshotDropzone() { return get('feedback-screenshot-dropzone'); },
+  get feedbackScreenshotPreview() { return get('feedback-screenshot-preview'); },
+  get feedbackScreenshotImg() { return get('feedback-screenshot-img'); },
+  get feedbackScreenshotRemove() { return get('feedback-screenshot-remove'); },
+  get feedbackIncludeDiag() { return get('feedback-include-diag'); }
 };

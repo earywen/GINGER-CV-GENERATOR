@@ -27,3 +27,11 @@ _Avoid_: PDF exporter, template renderer, print service
 **Bilingual Bundle**:
 A standardized ZIP package containing twin French and English official PDF resumes with corporate file naming conventions.
 _Avoid_: Zip export, download archive, pdf pack
+
+**Feedback Dispatcher**:
+The ingestion and routing service saving user-submitted feedback to durable disk storage and synchronizing with GitHub Issues.
+_Avoid_: Contact form, feedback handler, bug logger
+
+**Diagnostic Snapshot**:
+Sanitized client environment telemetry (browser user-agent, OS, viewport, active UI view) optionally attached to bug reports.
+_Avoid_: Telemetry payload, debug dump, client info

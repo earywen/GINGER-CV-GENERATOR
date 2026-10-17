@@ -6,7 +6,7 @@ from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core import settings, setup_logging, get_logger
-from app.routers import cv_router, render_router
+from app.routers import cv_router, render_router, feedback_router
 
 setup_logging()
 logger = get_logger(__name__)
@@ -72,3 +72,4 @@ async def health_check():
 # Include modular routers
 app.include_router(cv_router)
 app.include_router(render_router)
+app.include_router(feedback_router)
