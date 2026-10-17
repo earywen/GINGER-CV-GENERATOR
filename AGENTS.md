@@ -45,6 +45,21 @@
 5. **Rattachement d'agence (`agency_fr` / `agency_en`)** :
    * Par défaut rattaché à son agence locale (ex: Région Nord-Ouest • Agence de Rouen).
    * Ne basculer vers la "Direction des Métiers" que si mention explicite.
+6. **Format des adresses email collaborateur** :
+   * Le domaine officiel du groupe est strictement `@groupeginger.com`.
+   * Format canonique : `p.nom@groupeginger.com` (ex: `l.brigaud@groupeginger.com`, `h.hogie@groupeginger.com`).
+   * Ne jamais utiliser `@burgeap.fr` ni `@ginger-burgeap.com` dans les placeholders, tests ou communications destinées aux collaborateurs.
+7. **Expérience Utilisateur & Dialogues (Zéro popup natif)** :
+   * Interdiction FORMELLE d'utiliser les fonctions natives du navigateur (`window.alert()`, `window.confirm()`, `window.prompt()`).
+   * Employer exclusivement les composants de l'application conformes à la charte 2026 :
+     * `ConfirmModal.show({ title, message, acceptText, cancelText, danger, icon })` pour toute confirmation d'action.
+     * `Utils.toast(message, 'info' | 'warning' | 'error')` pour les notifications et retours d'état.
+8. **Discipline de Versioning & Changelog** :
+   * À chaque livraison de nouvelle fonctionnalité ou refonte majeure :
+     1. Incrémenter la version dans `pyproject.toml` et `app/core/config.py` (`APP_VERSION`).
+     2. Mettre à jour l'historique des versions et le badge de la modale « À propos » dans `app/static/index.html`.
+     3. Créer et pousser le tag git correspondant (`git tag -a vX.Y.Z -m "..." && git push origin --tags`).
+     4. Recharger le processus PM2 (`pm2 reload burgeap-cv-generator`).
 
 ## 5. Agent Skills
 
