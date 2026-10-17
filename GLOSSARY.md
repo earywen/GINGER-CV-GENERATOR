@@ -19,3 +19,11 @@ _Avoid_: Local cache, response cache, temp store
 **Studio Bust**:
 An officially cropped 3:4 portrait photo centered on the face and upper chest, or the corporate monogram fallback with employee initials.
 _Avoid_: Avatar, user photo, headshot
+
+**Document Engine**:
+The unified rendering engine transforming a Structured CV into an official 1-2 page A4 print PDF (WeasyPrint) or vector HTML preview with strict typographical budgeting.
+_Avoid_: PDF exporter, template renderer, print service
+
+**Bilingual Bundle**:
+A standardized ZIP package containing twin French and English official PDF resumes with corporate file naming conventions.
+_Avoid_: Zip export, download archive, pdf pack

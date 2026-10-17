@@ -1,8 +1,17 @@
 # -*- coding: utf-8 -*-
 import unittest
+import asyncio
 import pypdf
 import io
-from app.services.pdf_engine import render_html_template, generate_pdf_bytes, get_footer_text
+import zipfile
+from app.services.pdf_engine import (
+    render_html,
+    render_pdf,
+    render_bilingual_bundle,
+    render_html_template,
+    generate_pdf_bytes,
+    get_footer_text
+)
 
 SAMPLE_CV_DATA = {
     "name": "Marine RICHARD",
@@ -82,27 +91,43 @@ class TestPdfEngineParity(unittest.TestCase):
         self.assertEqual(get_footer_text("DIRECTION RÉGIONALE NORD-OUEST & ILE-DE-FRANCE", True), "Ginger Burgeap – Direction Régionale Nord-Ouest & Ile-de-France")
         self.assertEqual(get_footer_text("DIRECTION QUALITÉ, SÉCURITÉ, ENVIRONNEMENT", True), "Ginger Burgeap – Direction QSE & Métrologies")
 
-    def test_render_html_template_single_page(self):
-        html = render_html_template(SAMPLE_CV_DATA, lang="fr")
+    def test_render_html_single_page(self):
+        html = render_html(SAMPLE_CV_DATA, lang="fr")
         self.assertIn("Marine RICHARD", html)
         self.assertIn("Cheffe de Projets en Sites et Sols Pollués", html)
         self.assertIn("DÉPOLLUTION FONDERIE X", html)
         self.assertNotIn("cv-page-2", html)
 
-    def test_generate_pdf_bytes_single_page(self):
-        pdf_bytes = generate_pdf_bytes(SAMPLE_CV_DATA, lang="fr")
+    def test_render_pdf_async_single_page(self):
+        pdf_bytes = asyncio.run(render_pdf(SAMPLE_CV_DATA, lang="fr"))
         self.assertTrue(len(pdf_bytes) > 1000)
         reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
         self.assertEqual(len(reader.pages), 1)
 
-    def test_generate_pdf_bytes_two_pages(self):
+    def test_render_pdf_async_two_pages(self):
         two_page_data = dict(SAMPLE_CV_DATA)
         # 12 references to trigger Page 2
         two_page_data["refs_fr"] = SAMPLE_CV_DATA["refs_fr"] * 4
-        pdf_bytes = generate_pdf_bytes(two_page_data, lang="fr")
+        pdf_bytes = asyncio.run(render_pdf(two_page_data, lang="fr"))
         self.assertTrue(len(pdf_bytes) > 1000)
         reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
         self.assertEqual(len(reader.pages), 2)
+
+    def test_render_bilingual_bundle(self):
+        zip_bytes, zip_filename = asyncio.run(render_bilingual_bundle(SAMPLE_CV_DATA))
+        self.assertTrue(len(zip_bytes) > 2000)
+        self.assertIn("BURGEAP_2026.zip", zip_filename)
+
+        with zipfile.ZipFile(io.BytesIO(zip_bytes), "r") as zf:
+            names = zf.namelist()
+            self.assertEqual(len(names), 2)
+            self.assertTrue(any("FR.pdf" in n for n in names))
+            self.assertTrue(any("EN.pdf" in n for n in names))
+
+            for n in names:
+                f_bytes = zf.read(n)
+                reader = pypdf.PdfReader(io.BytesIO(f_bytes))
+                self.assertEqual(len(reader.pages), 1)
 
 if __name__ == "__main__":
     unittest.main()
