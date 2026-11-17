@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Batch Generation Script - Ginger Burgeap Rouen 2026.
-Automates the end-to-end extraction, AI parsing (Gemini 3.8 Flash via agy CLI),
+Automates the end-to-end extraction, AI parsing (Gemini 4 Hydrogen Medium via agy CLI),
 studio bust photo cropping, JSON data persistence, and WeasyPrint PDF generation
 for all collaborators of the Rouen agency.
 """
@@ -290,7 +290,7 @@ async def main():
     parser.add_argument(
         "--force-parse",
         action="store_true",
-        help="Ignore le cache et force un nouvel appel à Gemini 3.8 Flash"
+        help="Ignore le cache et force un nouvel appel à Gemini 4 Hydrogen Medium"
     )
     parser.add_argument(
         "--delay",

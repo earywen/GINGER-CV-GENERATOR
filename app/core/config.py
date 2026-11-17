@@ -40,8 +40,8 @@ class Settings(BaseSettings):
 
     # agy CLI configuration (authenticated via Google OAuth / Google Pro)
     AGY_BIN_PATH: str = Field(default_factory=_find_agy_binary)
-    AGY_MODEL: str = "gemini-3.8-flash-low"
-    AGY_EFFORT: str = "low"
+    AGY_MODEL: str = "gemini-4-hydrogen-medium"
+    AGY_EFFORT: str = "medium"
     AGY_TIMEOUT_SECONDS: int = 180
 
     # Default corporate values

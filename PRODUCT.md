@@ -14,7 +14,7 @@ Collaborateurs, ingénieurs d'études, chefs de projets et équipes RH / commerc
 
 Fournir une application web locale fluide, moderne et élégante permettant :
 1. De déposer un CV existant (PDF, DOCX, PPTX) et une photo portrait.
-2. D'extraire, restructurer et traduire automatiquement le profil via l'intelligence artificielle (Gemini 3.8 Flash via agy OAuth Google Pro, sans frais d'API).
+2. D'extraire, restructurer et traduire automatiquement le profil via l'intelligence artificielle (Gemini 4 Hydrogen Medium via agy OAuth Google Pro, sans frais d'API).
 3. D'ajuster et centrer la photo dans un médaillon studio officiel ou de générer des initiales corporate.
 4. D'éditer en direct les informations techniques dans une interface en double volet réactive.
 5. De prévisualiser le rendu A4 WeasyPrint en temps réel et de télécharger le PDF ou le pack bilingue ZIP.

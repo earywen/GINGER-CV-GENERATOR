@@ -6,7 +6,7 @@
   * **Framework** : FastAPI asynchrone (`app/main.py`, `app/routers/cv.py`, `app/routers/render.py`).
   * **Validation & Données** : Pydantic V2 (`app/models/cv.py`) avec contraintes strictes.
   * **Moteur d'extraction** : [`app/services/extractor.py`](file:///home/beelink/projets/burgeap-cv-generator/app/services/extractor.py) avec support prioritaire **`anymd`** (Markdown structuré, conservation des tableaux multi-colonnes, OCR) et fallback vers `pdfplumber` / `pypdf` / `docx` / `pptx`.
-  * **Orchestration IA** : [`app/services/ai_parser.py`](file:///home/beelink/projets/burgeap-cv-generator/app/services/ai_parser.py) via `agy` CLI (Gemini 3.8 Flash, authentification OAuth Pro) avec prompt métier, contraintes anti-IA et auto-réparation de traduction.
+  * **Orchestration IA** : [`app/services/ai_parser.py`](file:///home/beelink/projets/burgeap-cv-generator/app/services/ai_parser.py) via `agy` CLI (Gemini 4 Hydrogen Medium, authentification OAuth Pro) avec prompt métier, contraintes anti-IA et auto-réparation de traduction.
   * **Rendu PDF** : WeasyPrint + Jinja2 (`app/services/pdf_engine.py`, `app/templates/cv_template.html`).
 * **Frontend** : Dual-pane réactif sans build lourd (Tailwind CSS, JS moderne, Cropper.js pour les portraits, thèmes Light/Dark).
 
