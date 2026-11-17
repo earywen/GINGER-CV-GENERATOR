@@ -35,16 +35,19 @@
 2. **Expérience globale et ancienneté (`exp_fr` / `exp_en`)** :
    * Format Option 2 : `"X ans d'expérience, dont Y ans chez GINGER BURGEAP"` (ou `"X ans d'expérience chez GINGER BURGEAP"` si 100% de la carrière).
    * Calculée à l'obtention du diplôme qualifiant (Master 2, Ingénieur), sans compter les stages d'études antérieurs.
-3. **Compétences clés vs Qualifications** :
-   * À gauche (colonne bleue) : 5-6 puces résumant la posture et le pilotage sans citer de noms de clients.
-   * À droite : 4 qualifications méthodologiques concrètes.
+3. **Compétences clés vs Qualifications (Anti-doublon)** :
+   * À gauche (colonne bleue) : 5-6 puces concises résumant la posture, le pilotage et les types d'intervention sans citer de noms de clients et sans paraphraser les 4 blocs de droite.
+   * À droite : 4 qualifications méthodologiques concrètes et détaillées.
 4. **Références de projets (`refs_fr` / `refs_en`)** :
    * STRICTEMENT des projets réalisés au sein de GINGER BURGEAP (ou Groupe Ginger).
    * Interdiction de lister des chantiers réalisés chez d'anciens employeurs (sauf arrivée récente < 1 an si moins de 3 projets Burgeap).
    * Toujours qualifier la mission en ingénierie conseil (AMO, MOE, Études, Diagnostic) et JAMAIS en travaux physiques de dépollution/terrassement.
+   * **Terminologie SSP (« Réhabilitation » prioritaire)** : Privilégier systématiquement le terme officiel et normé « Réhabilitation » (ou « Réhabilitation environnementale ») plutôt que « Dépollution ». Ne réserver « dépollution » qu'aux procédés techniques unitaires in-situ.
+   * **Consolidation multi-phases (Dossiers complets de bout en bout)** : Si un collaborateur a suivi un même site sur plusieurs phases (ex: Diagnostic & ARR -> Plan de gestion -> MOE de réhabilitation), regrouper impérativement en une référence majeure valorisant la gestion complète du dossier de A à Z.
+   * **Qualification des références multi-sites** : Bannir les listes brutes de 4+ départements entre parenthèses (ex: `MULTI-SITES (77, 60, 76...)`) au profit d'un qualificatif régional ou sectoriel (ex: `MULTI-SITES NORMANDIE & ÎLE-DE-FRANCE`).
 5. **Rattachement d'agence (`agency_fr` / `agency_en`)** :
-   * Par défaut rattaché à son agence locale (ex: Région Nord-Ouest • Agence de Rouen).
-   * Ne basculer vers la "Direction des Métiers" que si mention explicite.
+   * Par défaut rattaché à son agence locale (ex: Région Nord-Ouest • Agence de Rouen), y compris pour les Directeurs de projets.
+   * Ne basculer vers la "Direction des Métiers" que si mention organisationnelle explicite (ex: Pôle Métier national).
 6. **Format des adresses email collaborateur** :
    * Le domaine officiel du groupe est strictement `@groupeginger.com`.
    * Format canonique : `p.nom@groupeginger.com` (ex: `l.brigaud@groupeginger.com`, `h.hogie@groupeginger.com`).

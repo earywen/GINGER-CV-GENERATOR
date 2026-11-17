@@ -28,6 +28,10 @@ class TestAiParser(unittest.TestCase):
         self.assertIn("RÈGLE ANTI-REDONDANCE QUALIFICATIONS", prompt)
         self.assertIn("DISTINCTION RIGOUREUSE INGÉNIERIE CONSEIL vs TRAVAUX DE CHANTIER", prompt)
         self.assertIn("DISTINCTION TITRE DE POSTE vs ENTITÉ DE RATTACHEMENT", prompt)
+        self.assertIn("RÉHABILITATION vs DÉPOLLUTION", prompt)
+        self.assertIn("CONSOLIDATION DES DOSSIERS MULTI-PHASES", prompt)
+        self.assertIn("QUALIFICATION DES RÉFÉRENCES MULTI-SITES", prompt)
+        self.assertIn("TRI ET HIÉRARCHISATION DES RÉFÉRENCES", prompt)
 
     def test_extraction_schema_has_required_fields(self):
         schema = get_cv_extraction_json_schema()

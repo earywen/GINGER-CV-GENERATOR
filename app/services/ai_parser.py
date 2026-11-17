@@ -69,6 +69,7 @@ RÈGLES STRICTES ET NON NÉGOCIABLES :
 - RÈGLE ANTI-REDONDANCE QUALIFICATIONS : INTERDICTION FORMELLE de paraphraser ou recopier à l'identique les intitulés des 4 paragraphes de "PRINCIPALES QUALIFICATIONS" !
   * Les "Compétences clés" (à gauche) résument la posture, le pilotage et les types de missions (ex: "Direction technique & pilotage de projets complexes", "Expertise contradictoire & tiers-expertise", "Audits de conformité réglementaire (ICPE/ALUR)", "Essais de traitabilité & bioremédiation in-situ", "Assistance technique stratégique").
   * Les "Principales qualifications" (à droite) détaillent les 4 domaines méthodologiques concrets du collaborateur.
+- TERMINOLOGIE SSP : Privilégier le terme normé (NF X 31-620) et valorisant de "RÉHABILITATION" (ou "RÉHABILITATION ENVIRONNEMENTALE") plutôt que "DÉPOLLUTION" (ex: "MOE de réhabilitation", "stratégie de réhabilitation des sols et nappes"). "Dépollution" n'est utilisé que s'il s'agit d'un procédé physico-chimique spécifique (ex: "traitement par sparging/venting").
 - NEUTRALITÉ DES CLIENTS : INTERDICTION FORMELLE de mentionner des noms de clients ou donneurs d'ordres spécifiques entre parenthèses dans la liste des compétences (ex: NE PAS écrire "Suivi piézométrique... (EDF/ORANO)", écris simplement "Suivi piézométrique et surveillance de la qualité des eaux sur sites industriels et nucléaires"). Les noms de clients appartiennent EXCLUSIVEMENT aux titres des références de projets !
 
 5. DIPLÔMES ET ENSEIGNEMENT SUPÉRIEUR (diplomes_fr / diplomes_en) :
@@ -109,6 +110,7 @@ RÈGLES STRICTES ET NON NÉGOCIABLES :
 9. PRINCIPALES QUALIFICATIONS (qualifs_fr / qualifs_en) :
 - Génère exactement 4 qualifications clés basées sur l'expérience réelle du collaborateur.
 - Chaque point commence par <strong>Domaine clé</strong> : description concrète et précise des compétences réelles (adaptées à sa vraie spécialité).
+- TERMINOLOGIE MÉTIER SSP : Privilégier systématiquement "RÉHABILITATION" à "DÉPOLLUTION" (ex: "Maîtrise d'œuvre et AMO de réhabilitation", "Stratégies de réhabilitation et reconversion de friches").
 
 10. PRINCIPALES RÉFÉRENCES (refs_fr / refs_en) :
 - RÈGLE D'OR DES RÉFÉRENCES GINGER BURGEAP :
@@ -121,10 +123,23 @@ RÈGLES STRICTES ET NON NÉGOCIABLES :
   * Précise SYSTÉMATIQUEMENT la nature réelle de la mission dans le titre et le tag :
     - "ÉTUDES ET ESSAIS DE FAISABILITÉ / TRAITABILITÉ..." (si études/essais)
     - "DIAGNOSTIC ENVIRONNEMENTAL ET PLAN DE GESTION..." (si diagnostic)
-    - "MAÎTRISE D'ŒUVRE (MOE) DE DÉPOLLUTION..." (si supervision de travaux)
+    - "MAÎTRISE D'ŒUVRE (MOE) DE RÉHABILITATION..." (si supervision de travaux)
     - "ASSISTANCE À MAÎTRISE D'OUVRAGE (AMO)..." (si accompagnement du maître d'ouvrage)
-- Extrais un MAXIMUM de projets et missions de référence réels (généralement entre 6 et 12 références selon l'expérience du collaborateur, classées des plus récentes aux plus anciennes).
-- title : Titre du projet / client / site en MAJUSCULES (ex: "MAÎTRISE D'ŒUVRE DE DÉPOLLUTION DU SITE INDUSTRIEL X – VALENCIENNES (59)").
+- TERMINOLOGIE MÉTIER SSP (RÉHABILITATION vs DÉPOLLUTION) :
+  * Privilégier systématiquement le terme officiel et valorisant de "RÉHABILITATION" plutôt que "DÉPOLLUTION" dans les titres et descriptions de références (ex: "MAÎTRISE D'ŒUVRE DE RÉHABILITATION...", "AMO RÉHABILITATION..."). Ne réserver "dépollution" qu'aux procédés techniques unitaires de traitement du sol.
+- CONSOLIDATION DES DOSSIERS MULTI-PHASES (ACCOMPAGNEMENT DE BOUT EN BOUT) :
+  * Lorsqu'un collaborateur est intervenu sur un même site ou pour un même client sur plusieurs phases successives (ex: Diagnostic & ARR -> Plan de gestion (PG) -> Maîtrise d'œuvre (MOE) / Suivi de chantier), REGROUPE impérativement ces interventions au sein d'une seule et même référence majeure complète.
+  * Titre type : "DIAGNOSTIC, PLAN DE GESTION ET MOE DE RÉHABILITATION – [SITE / CLIENT]"
+  * Cela valorise la gestion complète de l'affaire de A à Z, la fidélisation du client et la maîtrise globale du projet.
+- QUALIFICATION DES RÉFÉRENCES MULTI-SITES (ACTIVITÉS EAU, HYDROLOGIE & ÉCOLOGIE) :
+  * INTERDICTION FORMELLE d'aligner des listes arides de 4 numéros de départements ou plus entre parenthèses (ex: BANNIR "MULTI-SITES (77, 60, 76, 91, 14, 29)"). Si une référence regroupe plusieurs dossiers ou opérations similaires, qualifie plutôt le secteur géographique ou la typologie de clients (ex: "MULTI-SITES NORMANDIE & ÎLE-DE-FRANCE", "PARCS ENR & SITES INDUSTRIELS - NORD-OUEST").
+- TRI ET HIÉRARCHISATION DES RÉFÉRENCES :
+  * Prioriser en tête de liste :
+    1. Les dossiers complets multi-phases (Diag + PG + MOE) et les grands projets emblématiques.
+    2. Les missions récentes sous contrat GINGER BURGEAP.
+    3. La variété représentative des compétences du collaborateur (éviter 4 micro-missions identiques consécutives).
+- Extrais un MAXIMUM de projets et missions de référence réels (généralement entre 6 et 12 références selon l'expérience du collaborateur).
+- title : Titre du projet / client / site en MAJUSCULES (ex: "MAÎTRISE D'ŒUVRE DE RÉHABILITATION DU SITE INDUSTRIEL X – VALENCIENNES (59)").
 - tag : Badge thématique court (2 à 4 mots en MAJUSCULES, fidèle au domaine du projet, ex: "AGRONOMIE & SOLS", "MAÎTRISE D'ŒUVRE", "GESTION DES DÉCHETS", "RISQUE INONDATION", "EPR2").
 - desc : Synthèse claire et factuelle de 18 à 28 mots (contexte, missions réalisées par le collaborateur, résultats).
 
