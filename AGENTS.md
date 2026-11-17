@@ -57,11 +57,11 @@
    * Employer exclusivement les composants de l'application conformes à la charte 2026 :
      * `ConfirmModal.show({ title, message, acceptText, cancelText, danger, icon })` pour toute confirmation d'action.
      * `Utils.toast(message, 'info' | 'warning' | 'error')` pour les notifications et retours d'état.
-8. **Discipline de Versioning & Changelog** :
-   * À chaque livraison de nouvelle fonctionnalité ou refonte majeure :
-     1. Incrémenter la version dans `pyproject.toml` et `app/core/config.py` (`APP_VERSION`).
-     2. Mettre à jour l'historique des versions et le badge de la modale « À propos » dans `app/static/index.html`.
-     3. Créer et pousser le tag git correspondant (`git tag -a vX.Y.Z -m "..." && git push origin --tags`).
+8. **Discipline de Versioning & Changelog (Zéro décalage GitHub / App)** :
+   * **À chaque commit/push d'évolution, d'amélioration, d'upgrade technique ou de correctif** (ne jamais laisser de décalage entre les commits GitHub et la modale « À propos / Crédits & Versions » de l'application) :
+     1. Incrémenter la version (`X.Y.Z`) de manière cohérente dans les **4 emplacements** : `pyproject.toml`, `app/core/config.py` (`APP_VERSION`), `app/static/js/modals.js` (`appVersion`), et le badge de la modale « À propos » dans `app/static/index.html`.
+     2. Mettre à jour l'historique des versions (onglet Crédits & Versions) dans `app/static/index.html` pour refléter fidèlement chaque changement livré.
+     3. Créer et pousser le tag git correspondant (`git tag -a vX.Y.Z -m "..." && git push origin main --tags`).
      4. Recharger le processus PM2 (`pm2 reload burgeap-cv-generator`).
 
 ## 5. Agent Skills
