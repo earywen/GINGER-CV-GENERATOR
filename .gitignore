@@ -26,3 +26,6 @@ venv*/
 # Runtime data & cache
 data/
 
+# Presentation media & slides
+docs/presentation/
+
